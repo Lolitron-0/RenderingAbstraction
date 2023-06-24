@@ -7,7 +7,7 @@ project "RenderAbstraction"
 	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
 
 	pchheader "rapch.h"
-	pchsource "src/rapch.cpp"
+	pchsource "%{prj.location}/src/rapch.cpp"
 
 	files
 	{
@@ -20,7 +20,8 @@ project "RenderAbstraction"
 	{
 		"include",
 		"%{IncludeDir.Glad}",
-		"%{IncludeDir.GLFW}"
+		"%{IncludeDir.GLFW}",
+		"%{IncludeDir.glm}",
 	}
 
 	defines
