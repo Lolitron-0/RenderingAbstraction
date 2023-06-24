@@ -1,8 +1,8 @@
 #pragma once
-#include "Lithe/Renderer/RenderingContext.hpp"
+#include "RenderingContext.hpp"
 #include <GLFW/glfw3.h>
 
-namespace Lithe
+namespace ra
 {
     class OpenGLContext final : public RenderingContext
     {
@@ -11,6 +11,8 @@ namespace Lithe
 
         void Init() override;
         void SwapBuffers() override;
+
+        APIinfo GetInfo() const override;
 
         GLFWwindow* m_WindowHandle;
     };

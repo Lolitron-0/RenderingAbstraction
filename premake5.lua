@@ -19,6 +19,19 @@ project "RenderAbstraction"
 	includedirs
 	{
 		"include",
+		"%{IncludeDir.Glad}",
+		"%{IncludeDir.GLFW}"
+	}
+
+	defines
+	{
+		"GLFW_INCLUDE_NONE",
+	}
+
+	links
+	{
+		"Glad",
+		"GLFW",
 	}
 
 	filter "system:windows"
