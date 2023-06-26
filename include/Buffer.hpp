@@ -7,7 +7,7 @@ namespace Ra
     enum class UniformDataType { None = 0, Float, Float2, Float3, Float4, Mat3, Mat4, Int, Int2, Int3, Int4, Bool };
 
     /// Statically evaluates given data type size
-    static size_t UniformDataTypeSize(UniformDataType dataType)
+    static std::size_t UniformDataTypeSize(UniformDataType dataType)
     {
         switch (dataType)
         {
@@ -28,7 +28,7 @@ namespace Ra
 
     /**
      * @brief Element of Buffer layout
-     * 
+     *
      * Size and offset are calculated according to given data type and used to calculate vertex stride
     */
     struct BufferElement
@@ -38,6 +38,25 @@ namespace Ra
         size_t Offset;
         size_t Size;
 
+        std::uint8_t GetComponentCount() 
+        {
+            switch (DataType)
+            {
+            case UniformDataType::Float:  return 1;
+            case UniformDataType::Float2: return 2;
+            case UniformDataType::Float3: return 3;
+            case UniformDataType::Float4: return 4;
+            case UniformDataType::Int: return 1;
+            case UniformDataType::Int2: return 2;
+            case UniformDataType::Int3: return 3;
+            case UniformDataType::Int4: return 4;
+            case UniformDataType::Mat3: return 3;  // 3xFloat3
+            case UniformDataType::Mat4: return 4;  // 4xFloat4
+            default:
+                break;
+            }
+        }
+
         BufferElement(const UniformDataType& dataType, const std::string& name)
             : DataType(dataType), Name(name), Offset(0), Size(UniformDataTypeSize(DataType))
         {}
@@ -45,7 +64,7 @@ namespace Ra
 
     /**
      * @brief Class describing data arrangement in VertexBuffers
-     * 
+     *
      * Layout can be defined as follows:
      * @code{.cpp}
      * BufferLayout layout = {
@@ -65,6 +84,9 @@ namespace Ra
         {
             CalculateOffsetAndStride_();
         }
+
+        std::size_t GetCount() const { return m_BufferElements.size(); }
+        std::size_t GetStride() const { return m_Stride; }
 
         std::vector<BufferElement>::iterator begin() { return m_BufferElements.begin(); }
         std::vector<BufferElement>::iterator end() { return m_BufferElements.end(); }
@@ -91,7 +113,7 @@ namespace Ra
         std::vector<BufferElement> m_BufferElements;
     };
 
-    
+
     /// Interface for vertex buffer object
     class VertexBuffer
     {

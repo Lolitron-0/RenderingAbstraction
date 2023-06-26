@@ -1,9 +1,16 @@
 #include "rapch.h"
 #include "Renderer.hpp"
+#include "RenderCommand.hpp"
 
 namespace Ra
 {
 
-    Renderer::API Renderer::s_RendererAPI = Renderer::API::OpenGL;  //TODO: Runtime change in editor
+    RendererAPI::API Renderer::s_RendererAPI = RendererAPI::API::None; 
+
+    void Renderer::Init()
+    {
+        if (s_RendererAPI != RendererAPI::API::None)
+            RenderCommand::Init();
+    }
 
 }

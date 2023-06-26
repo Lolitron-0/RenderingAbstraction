@@ -9,7 +9,7 @@ namespace Ra
     {
         switch (Renderer::GetAPI())
         {
-        case Renderer::API::OpenGL: return std::make_unique<OpenGLContext>(std::any_cast<GLFWwindow*>(windowHandle));
+        case RendererAPI::API::OpenGL: return std::make_unique<OpenGLContext>(std::any_cast<GLFWwindow*>(windowHandle));
         default:
         {
             return nullptr;

@@ -39,10 +39,13 @@ project "RenderAbstraction"
 		systemversion "latest"
         cppdialect "C++17"
         staticruntime "On"
+		defines { "RA_WINDOWS" }
+
 
 	filter "configurations:Debug"
 		runtime "Debug"
 		symbols "on"
+		defines { "RA_DEBUG" }
 
 	filter "configurations:Release"
 		runtime "Release"

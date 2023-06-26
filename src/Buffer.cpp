@@ -9,7 +9,7 @@ namespace Ra
     {
         switch (Renderer::GetAPI())
         {
-        case Renderer::API::OpenGL: return std::make_shared<OpenGLVertexBuffer>(size);
+        case RendererAPI::API::OpenGL: return std::make_shared<OpenGLVertexBuffer>(size);
         default: return nullptr;
         }
     }
@@ -18,7 +18,7 @@ namespace Ra
     {
         switch (Renderer::GetAPI())
         {
-        case Renderer::API::OpenGL: return std::make_shared<OpenGLVertexBuffer>(vertices, size);
+        case RendererAPI::API::OpenGL: return std::make_shared<OpenGLVertexBuffer>(vertices, size);
         default: return nullptr;
         }
     }
@@ -27,7 +27,7 @@ namespace Ra
     {
         switch (Renderer::GetAPI())
         {
-        case Renderer::API::OpenGL: return std::make_shared<OpenGLIndexBuffer>(indices, size);
+        case RendererAPI::API::OpenGL: return std::make_shared<OpenGLIndexBuffer>(indices, size);
         default: return nullptr;
         }
     }
