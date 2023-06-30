@@ -100,4 +100,14 @@ namespace Ra
         m_IndexBuffer = buffer;
     }
 
+    std::vector<Ra::Ref<Ra::VertexBuffer>> OpenGLVertexArray::GetVertexBuffers() const
+    {
+        return m_VertexBuffers;
+    }
+
+    Ra::Ref<Ra::IndexBuffer> OpenGLVertexArray::GetIndexBufer() const
+    {
+        return m_IndexBuffer;
+    }
+
 }

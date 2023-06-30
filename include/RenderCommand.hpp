@@ -18,7 +18,7 @@ namespace Ra
         static void SetClearColor(const glm::vec4& color);
         static void Clear();
 
-        static void DrawIndexed(const Ref<VertexArray>& array, std::uint32_t indexCount);
+        static void DrawIndexed(const Ref<VertexArray>& array, std::uint32_t indexCount = 0);
         static void DrawLines(const Ref<VertexArray>& array, std::uint32_t vertexCount);
 
     private:

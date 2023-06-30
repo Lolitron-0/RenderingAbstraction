@@ -1,6 +1,8 @@
 #include "rapch.h"
 #include "RenderCommand.hpp"
 #include "RendererAPI.hpp"
+#include "VertexArray.hpp"
+#include "Buffer.hpp"
 
 namespace Ra
 {
@@ -27,7 +29,7 @@ namespace Ra
 
     void RenderCommand::DrawIndexed(const Ref<VertexArray>& array, std::uint32_t indexCount)
     {
-        s_RendererAPI->DrawIndexed(array, indexCount);
+        s_RendererAPI->DrawIndexed(array, indexCount ? indexCount : array->GetIndexBufer()->GetCount());
     }
 
     void RenderCommand::DrawLines(const Ref<VertexArray>& array, std::uint32_t vertexCount)

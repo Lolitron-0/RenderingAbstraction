@@ -15,6 +15,10 @@ namespace Ra
         void AddVertexBuffer(const Ref<VertexBuffer>& buffer) override;
         void SetIndexBuffer(const Ref<IndexBuffer>& buffer) override;
 
+
+        std::vector<Ref<VertexBuffer>> GetVertexBuffers() const override;
+        Ref<IndexBuffer> GetIndexBufer() const override;
+
     private:
         std::uint32_t m_Handle;
         std::vector<Ref<VertexBuffer>> m_VertexBuffers;

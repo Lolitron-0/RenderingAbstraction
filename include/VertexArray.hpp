@@ -25,6 +25,9 @@ namespace Ra
         */
         virtual void SetIndexBuffer(const Ref<IndexBuffer>& buffer) = 0;
 
+        virtual std::vector<Ref<VertexBuffer>> GetVertexBuffers() const = 0;
+        virtual Ref<IndexBuffer> GetIndexBufer() const = 0;
+
         /**
          * @brief Factory method for vertex array creation
          * @return Ref counted object to abstract vertex array interface, nullptr in case of unknown/unset rendering API

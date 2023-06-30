@@ -6,3 +6,5 @@
 #include "VertexArray.hpp"
 #include "Shader.hpp"
 #include "RenderCommand.hpp"
+#include "Camera.hpp"
+#include "Mesh.hpp"
