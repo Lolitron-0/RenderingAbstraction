@@ -6,6 +6,7 @@ namespace Ra
 {
     class VertexArray;
 
+    /// Non-static interface for API-level rendering commands
     class RendererAPI
     {
     public:

@@ -3,6 +3,7 @@
 
 namespace Ra
 {
+    /// Implementation for OpenGL vertex array
     class OpenGLVertexArray : public VertexArray
     {
     public:

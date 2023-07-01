@@ -4,6 +4,7 @@
 
 namespace Ra
 {
+    /// Implementation for OpenGL vertex buffer
     class OpenGLVertexBuffer : public VertexBuffer
     {
     public:
@@ -24,6 +25,7 @@ namespace Ra
     /* IndexBuffer                                                          */
     /************************************************************************/
 
+    /// Implementation for OpenGL index (element) buffer
     class OpenGLIndexBuffer : public IndexBuffer
     {
     public:

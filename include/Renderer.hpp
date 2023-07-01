@@ -6,6 +6,7 @@
 
 namespace Ra
 {
+    /// High level rendering commands (Scene level)
     class Renderer
     {
     public:

@@ -3,6 +3,7 @@
 
 namespace Ra
 {
+    /// Implementation for OpenGL GLSL shader
     class OpenGLShader : public Shader
     {
     public:

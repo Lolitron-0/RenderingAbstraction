@@ -3,6 +3,7 @@
 
 namespace Ra
 {
+    /// Implementation for OpenGL rendering API commands
     class OpenGLRendererAPI : public RendererAPI
     {
     public:

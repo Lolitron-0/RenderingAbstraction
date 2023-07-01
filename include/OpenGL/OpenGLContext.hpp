@@ -4,6 +4,7 @@
 
 namespace Ra
 {
+    /// Implementation for OpenGL rendering context
     class OpenGLContext final : public RenderingContext
     {
     public:

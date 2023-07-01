@@ -14,15 +14,13 @@ namespace Ra
     public:
         /**
          * @brief Struct with all rendering API info (for client logging or whatever)
-         * @var APIinfo::NativeVersion 
-         * Contains native info object for API (e.g. gladGLversionStruct GLVersion for OpenGL (glad))
-         */
+        */
         struct APIinfo
         {
             std::string Renderer;
             std::string Vendor;
             std::string Version;
-            std::any NativeInfo;
+            std::any NativeInfo; /*!< Contains native info object for API (e.g. gladGLversionStruct GLVersion for OpenGL (glad)) */
         };
 
         virtual ~RenderingContext() = default;
