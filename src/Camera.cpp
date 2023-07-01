@@ -4,8 +4,8 @@
 
 namespace Ra
 {
-    Ra::Camera::Camera(const glm::vec3& position, float yaw, float pitch, float aspectRatio, const glm::vec3& worldUp)
-        : m_Position(position), m_WorldUp(glm::normalize(worldUp)), m_Yaw(yaw), m_Pitch(pitch), m_ViewMatrix(1.f), m_ProjMatrix(1.f)
+    Ra::Camera::Camera(const glm::vec3& position, float aspectRatio, const glm::vec3& worldUp)
+        : m_Position(position), m_WorldUp(glm::normalize(worldUp)), m_Yaw(-90), m_Pitch(0), m_ViewMatrix(1.f), m_ProjMatrix(1.f)
     {
         m_ProjMatrix = glm::mat4(1.f);
         m_ProjMatrix = glm::perspective(glm::radians(45.f), aspectRatio, .1f, 100.f);

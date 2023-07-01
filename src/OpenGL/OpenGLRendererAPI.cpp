@@ -49,17 +49,26 @@ namespace Ra
         glViewport(x, y, width, height);
     }
 
-    void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& array, std::uint32_t indexCount)
+    void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& array, DrawMode mode, std::uint32_t indexCount)
     {
         array->Bind();
-        glDrawElements(GL_TRIANGLES, indexCount, GL_UNSIGNED_INT, nullptr);
+        glPointSize(10);
+        glDrawElements(ToAPIDrawMode_(mode), indexCount+1, GL_UNSIGNED_INT, nullptr);
     }
 
-    void OpenGLRendererAPI::DrawLines(const Ref<VertexArray>& array, std::uint32_t vertexCount)
+    int OpenGLRendererAPI::ToAPIDrawMode_(RendererAPI::DrawMode mode)
     {
-        array->Bind();
-        glDrawArrays(GL_LINES, 0, vertexCount);
+        return s_ToAPIDrawModeMap.at(mode);
     }
 
+    const std::unordered_map<Ra::RendererAPI::DrawMode, int> OpenGLRendererAPI::s_ToAPIDrawModeMap = {
+         {RendererAPI::DrawMode::Triangles,        GL_TRIANGLES},
+         {RendererAPI::DrawMode::Lines,            GL_LINES},
+         {RendererAPI::DrawMode::Points,           GL_POINTS},
+         {RendererAPI::DrawMode::TriangleFan,      GL_TRIANGLE_FAN},
+         {RendererAPI::DrawMode::LineLoop,         GL_LINE_LOOP},
+         {RendererAPI::DrawMode::TriangleStrip,    GL_TRIANGLE_STRIP},
+         {RendererAPI::DrawMode::LineStrip,        GL_LINE_STRIP},
+    };
 
 }

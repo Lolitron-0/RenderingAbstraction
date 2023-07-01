@@ -29,12 +29,12 @@ namespace Ra
 
     }
 
-    void Renderer::Submit(const Ref<VertexArray>& vertexArray, const Ref<Shader>& shader)
+    void Renderer::Submit(const Ref<VertexArray>& vertexArray, const Ref<Shader>& shader, RendererAPI::DrawMode mode)
     {
         shader->Bind();
         shader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
 
-        RenderCommand::DrawIndexed(vertexArray);
+        RenderCommand::DrawIndexed(vertexArray, mode);
     }
 
 }

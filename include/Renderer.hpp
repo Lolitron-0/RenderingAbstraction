@@ -9,18 +9,21 @@ namespace Ra
     class Renderer
     {
     public:
-
         static void Init();
         static void Shutdown();
 
         static RendererAPI::API GetAPI() { return s_RendererAPI; }
+
+        /// Sets current rendering API. Can only be set once
         static void SetAPI(RendererAPI::API api)
         {
             RA_ASSERT(s_RendererAPI == RendererAPI::API::None, "Rendering API can only be set once!");
             s_RendererAPI = api;
         }
 
+        /// Initializes scene with given camera
         static void BeginScene(const Camera& camera);
+        /// Marks scene as finished
         static void EndScene();
 
         //template<class F, class... Args>
@@ -35,7 +38,13 @@ namespace Ra
         //    s_RenderThreadMutex.unlock();
         //}
 
-        static void Submit(const Ref<VertexArray>& vertexArray, const Ref<Shader>& shader);
+        /**
+         * @brief Submits draw command to a renderer
+         * @param VertexArray vertex array to draw
+         * @param shader Shader to use for drawing
+         * @param mode Drawing mode (e.g. triangles, lines, points, etc.)
+        */
+        static void Submit(const Ref<VertexArray>& vertexArray, const Ref<Shader>& shader, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
 
     private:
         static RendererAPI::API s_RendererAPI;

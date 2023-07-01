@@ -15,6 +15,17 @@ namespace Ra
             OpenGL,
         };
 
+        enum class DrawMode
+        {
+            Points,
+            Triangles,
+            TriangleFan,
+            TriangleStrip,
+            Lines,
+            LineLoop,
+            LineStrip,
+        };
+
     public:
         virtual ~RendererAPI() = default;
 
@@ -25,9 +36,11 @@ namespace Ra
         virtual void SetClearColor(const glm::vec4& color) = 0;
         virtual void Clear() = 0;
 
-        virtual void DrawIndexed(const Ref<VertexArray>& array, std::uint32_t indexCount) = 0;
-        virtual void DrawLines(const Ref<VertexArray>& array, std::uint32_t vertexCount) = 0;
+        virtual void DrawIndexed(const Ref<VertexArray>& array, DrawMode mode, std::uint32_t indexCount) = 0;
 
         static Scope<RendererAPI> Create();
+
+    protected:
+        virtual int ToAPIDrawMode_(RendererAPI::DrawMode mode) = 0;
     };
 }

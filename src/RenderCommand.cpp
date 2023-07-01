@@ -27,14 +27,9 @@ namespace Ra
         s_RendererAPI->Clear();
     }
 
-    void RenderCommand::DrawIndexed(const Ref<VertexArray>& array, std::uint32_t indexCount)
+    void RenderCommand::DrawIndexed(const Ref<VertexArray>& array, RendererAPI::DrawMode mode, std::uint32_t indexCount /*= 0*/)
     {
-        s_RendererAPI->DrawIndexed(array, indexCount ? indexCount : array->GetIndexBufer()->GetCount());
-    }
-
-    void RenderCommand::DrawLines(const Ref<VertexArray>& array, std::uint32_t vertexCount)
-    {
-        s_RendererAPI->DrawLines(array, vertexCount);
+        s_RendererAPI->DrawIndexed(array, mode, indexCount ? indexCount : array->GetIndexBufer()->GetCount());
     }
 
     Scope<Ra::RendererAPI> RenderCommand::s_RendererAPI = nullptr;

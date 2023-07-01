@@ -14,10 +14,11 @@ namespace Ra
         Down
     };
 
+    /// Camera abstraction class
     class Camera
     {
     public:
-        Camera(const glm::vec3& position, float yaw, float pitch, float aspectRatio, const glm::vec3& worldUp = { 0.f, 1.f, 0.f });
+        Camera(const glm::vec3& position, float aspectRatio, const glm::vec3& worldUp = { 0.f, 1.f, 0.f });
 
         virtual ~Camera() = default;
 
@@ -26,8 +27,10 @@ namespace Ra
         float GetYaw() const { return m_Yaw; }
         float GetPitch() const { return m_Pitch; }
 
+        /// Returns camera front vector
         glm::vec3 GetLookDirection() const { return m_Front; }
 
+        /// Returns current view-projection matrix
         glm::mat4 GetViewProjection() const { return m_ViewProjMatrix; }
 
         void SetPosition(const glm::vec3& pos) { m_Position = pos; RecalculateMatrix_(); }
