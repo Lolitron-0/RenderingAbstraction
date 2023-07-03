@@ -40,6 +40,14 @@ namespace Ra
         RecalculateMatrix_();
     }
 
+    void Camera::SetPerspective(float fov, float aspectRatio, float near, float far)
+    {
+        m_ProjMatrix = glm::mat4(1.f);
+        m_ProjMatrix = glm::perspective(glm::radians(fov), aspectRatio, near, far);
+
+        m_ViewProjMatrix = m_ProjMatrix * m_ViewMatrix;
+    }
+
     void Camera::RecalculateMatrix_()
     {
         glm::vec3 front;

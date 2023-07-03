@@ -21,7 +21,7 @@ namespace Ra
         Ref<IndexBuffer> GetIndexBufer() const override;
 
     private:
-        std::uint32_t m_Handle;
+        RendererId m_Handle;
         std::vector<Ref<VertexBuffer>> m_VertexBuffers;
         Ref<IndexBuffer> m_IndexBuffer;
         std::uint32_t m_VertexAttribIndex{ 0 };

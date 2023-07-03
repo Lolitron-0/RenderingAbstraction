@@ -28,6 +28,10 @@ namespace Ra
         virtual void SetVec3(const std::string name, const glm::vec3& vec) = 0;
         /// Uniform vec3 variable setter
         virtual void SetVec3(const std::string name, float x, float y, float z) = 0;
+        /// Uniform vec4 variable setter
+        virtual void SetVec4(const std::string name, const glm::vec4& vec) = 0;
+        /// Uniform vec4 variable setter
+        virtual void SetVec4(const std::string name, float x, float y, float z, float w) = 0;
 
         /**
          * @brief Factory static method to create rendering API independent shaders

@@ -36,7 +36,7 @@ namespace Ra
 
         std::uint32_t GetCount() const override { return m_Count; }
     private:
-        std::uint32_t m_Handle;
+        RendererId m_Handle;
         std::uint32_t m_Count;
     };
 }

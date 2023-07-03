@@ -94,4 +94,14 @@ namespace Ra
         glUniform3f(glGetUniformLocation(m_Handle, name.c_str()), x, y, z);
     }
 
+    void OpenGLShader::SetVec4(const std::string name, const glm::vec4& vec)
+    {
+        glUniform4fv(glGetUniformLocation(m_Handle, name.c_str()), 1, &vec[0]);
+    }
+
+    void OpenGLShader::SetVec4(const std::string name, float x, float y, float z, float w)
+    {
+        glUniform4f(glGetUniformLocation(m_Handle, name.c_str()), x, y, z, w);
+    }
+
 }

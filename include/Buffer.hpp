@@ -53,6 +53,7 @@ namespace Ra
             case UniformDataType::Mat3: return 3;  // 3xFloat3
             case UniformDataType::Mat4: return 4;  // 4xFloat4
             default:
+                return 0;
                 break;
             }
         }

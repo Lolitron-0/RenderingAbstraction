@@ -2,6 +2,8 @@
 
 namespace Ra
 {
+    using RendererId = std::uint32_t;
+
     using ErrorCallbackFn = std::function<void(const std::string&)>;
 
     extern ErrorCallbackFn errorCallback;

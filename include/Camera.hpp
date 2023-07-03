@@ -49,6 +49,8 @@ namespace Ra
         /// Moves camera in chosen direction on given value
         void ShiftPosition(const CameraDirection& dir, float val);
 
+        void SetPerspective(float fov, float aspectRatio, float near = .1f, float far = 100.f);
+
     protected:
         void RecalculateMatrix_();
 

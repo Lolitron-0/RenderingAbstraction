@@ -20,7 +20,9 @@ namespace Ra
         void SetMat4(const std::string name, const glm::mat4& mat) override;
         void SetVec3(const std::string name, const glm::vec3& vec) override;
         void SetVec3(const std::string name, float x, float y, float z) override;
+        void SetVec4(const std::string name, const glm::vec4& vec) override;
+        void SetVec4(const std::string name, float x, float y, float z, float w) override;
     private:
-        std::uint32_t m_Handle;
+        RendererId m_Handle;
     };
 }
