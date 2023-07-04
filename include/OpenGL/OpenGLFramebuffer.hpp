@@ -14,7 +14,8 @@ namespace Ra
 
         void Resize(std::uint32_t width, std::uint32_t height) override;
 
-        RendererId GetColorAttachmentHandle() const override;
+        RendererId GetColorAttachmentHandle(std::size_t index) const override;
+        RendererId GetDrawTextureHandle(std::size_t index = 0) const override;
 
         const FramebufferProperties& GetProperties() const override;
 
@@ -22,8 +23,15 @@ namespace Ra
         void Invalidate_();
         void Cleanup_();
 
-        RendererId m_Handle{ 0 };
-        RendererId m_ColorAttachmentHandle{ 0 }, m_DepthAttachmentHandle{ 0 };
+        RendererId m_MainFramebufferHandle{ 0 };
+        std::vector<RendererId> m_ColorAttachments;
+        RendererId m_DepthAttachment{ 0 };
+
+        std::vector<TextureSpecification> m_ColorAttachmentSpecifications;
+        TextureSpecification m_DepthAttachmentSpecification;
+
+        RendererId m_ResolveFramebufferHandle{ 0 };
+        RendererId m_ResolvedAttachment{ 0 };
 
         FramebufferProperties m_Properties;
     };
