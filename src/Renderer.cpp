@@ -104,4 +104,11 @@ namespace Ra
         RenderCommand::DrawIndexed(vertexArray, mode);
     }
 
+    void Renderer::DrawCube(const glm::mat4& transform, const Ref<Shader>& shader)
+    {
+        shader->Bind();
+        shader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
+        shader->SetMat4("u_Model", transform);
+    }
+
 }
