@@ -47,6 +47,8 @@ namespace Ra
         */
         static void Submit(const Ref<VertexArray>& vertexArray, const Ref<Shader>& shader, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
 
+        static void DrawCube(const glm::mat4& tramsform, const Ref<Shader>& shader);
+
     private:
         static RendererAPI::API s_RendererAPI;
 

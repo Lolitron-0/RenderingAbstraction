@@ -8,7 +8,43 @@ namespace Ra
     {
         auto vertexSource{ LoadSourceFromFile_(vertPath) };
         auto fragSource{ LoadSourceFromFile_(fragPath) };
+        Compile_(vertexSource, fragSource);
+    }
 
+    OpenGLShader::OpenGLShader(const std::string& shaderPath)
+    {
+        auto& [vertexSource, fragSource] = GetShaderSources_(LoadSourceFromFile_(shaderPath));
+        Compile_(vertexSource, fragSource);
+    }
+
+    std::pair<std::string, std::string> OpenGLShader::GetShaderSources_(const std::string& data)
+    {
+        std::pair<std::string, std::string> res;
+
+        const char* typeToken = "#type";
+        std::size_t typeTokenLength = strlen(typeToken);
+        std::size_t pos = data.find(typeToken, 0);
+        while (pos != std::string::npos)
+        {
+            std::size_t eol = data.find_first_of("\r\n", pos);
+            RA_ASSERT(eol != std::string::npos, "Invalid syntax!");
+            std::size_t begin = pos + typeTokenLength + 1;
+            std::string shaderType = data.substr(begin, eol - begin);
+            pos = data.find(typeToken, eol);
+            std::size_t nextLinePos = data.find_first_not_of("\r\n", eol);
+            RA_ASSERT(nextLinePos != std::string::npos, "Invalid syntax! No next source line!");
+            if (shaderType == "vertex")
+                res.first = pos == std::string::npos ? data.substr(nextLinePos) : data.substr(nextLinePos, pos - nextLinePos);
+            else if (shaderType == "fragment")
+                res.second = pos == std::string::npos ? data.substr(nextLinePos) : data.substr(nextLinePos, pos - nextLinePos);
+            else
+                RA_ASSERT(false, "Invalid shader type!");
+        }
+        return res;
+    }
+
+    void OpenGLShader::Compile_(const std::string& vertexSource, const std::string& fragSource)
+    {
         auto vertexSourceData = vertexSource.c_str();
         auto fragmentSourceData = fragSource.c_str();
 

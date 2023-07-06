@@ -15,6 +15,15 @@ namespace Ra
         }
     }
 
+    Ref<Shader> Shader::Create(const std::string& shaderPath)
+    {
+        switch (Renderer::GetAPI())
+        {
+        case RendererAPI::API::OpenGL: return std::make_shared<OpenGLShader>(shaderPath);
+        default: { RA_ASSERT(false, "No rendering API has been set!"); return nullptr; }
+        }
+    }
+
     std::string Shader::LoadSourceFromFile_(const std::string& path)
     {
         std::ifstream stream(path);
