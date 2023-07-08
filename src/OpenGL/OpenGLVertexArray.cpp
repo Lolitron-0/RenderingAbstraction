@@ -38,10 +38,10 @@ namespace Ra
         {
             switch (element.DataType)
             {
-            case UniformDataType::Float:
-            case UniformDataType::Float2:
-            case UniformDataType::Float3:
-            case UniformDataType::Float4:
+            case BufferDataType::Float:
+            case BufferDataType::Float2:
+            case BufferDataType::Float3:
+            case BufferDataType::Float4:
             {
                 glEnableVertexAttribArray(m_VertexAttribIndex);
                 glVertexAttribPointer(m_VertexAttribIndex,
@@ -53,10 +53,10 @@ namespace Ra
                 m_VertexAttribIndex++;
                 break;
             }
-            case UniformDataType::Int:
-            case UniformDataType::Int2:
-            case UniformDataType::Int3:
-            case UniformDataType::Int4:
+            case BufferDataType::Int:
+            case BufferDataType::Int2:
+            case BufferDataType::Int3:
+            case BufferDataType::Int4:
             {
                 glEnableVertexAttribArray(m_VertexAttribIndex);
                 glVertexAttribIPointer(m_VertexAttribIndex,
@@ -67,8 +67,8 @@ namespace Ra
                 m_VertexAttribIndex++;
                 break;
             }
-            case UniformDataType::Mat3:
-            case UniformDataType::Mat4:
+            case BufferDataType::Mat3:
+            case BufferDataType::Mat4:
             {
                 std::uint8_t count = element.GetComponentCount();
                 for (int i{ 0 }; i < count; i++)

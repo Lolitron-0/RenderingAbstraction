@@ -72,11 +72,17 @@ namespace Ra
         };
         
         s_Data.CubeVertexBuffer = VertexBuffer::Create(cubeData, sizeof(cubeData));
+        s_Data.CubeVertexBuffer->SetLayout({
+            {BufferDataType::Float3, "position"},
+            {BufferDataType::Float2, "texCoords"},
+            {BufferDataType::Float3, "normals"}
+            });
+
         std::uint32_t* cubeIndices = new std::uint32_t[36];
         for (int i = 0; i < 36; i++) cubeIndices[i] = i;
-
         s_Data.CubeIndexBuffer = IndexBuffer::Create(cubeIndices, 36);
-
+        delete[] cubeIndices;
+       
         s_Data.CubeVertexArray = VertexArray::Create();
         s_Data.CubeVertexArray->AddVertexBuffer(s_Data.CubeVertexBuffer);
         s_Data.CubeVertexArray->SetIndexBuffer(s_Data.CubeIndexBuffer);
@@ -102,6 +108,15 @@ namespace Ra
         shader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
 
         RenderCommand::DrawIndexed(vertexArray, mode);
+    }
+
+    void Renderer::DrawCube(const glm::mat4& transform, const Ref<Shader>& shader, RendererAPI::DrawMode mode)
+    {
+        shader->Bind();
+        shader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
+        shader->SetMat4("u_Model", transform);
+
+        RenderCommand::DrawIndexed(s_Data.CubeVertexArray, mode);
     }
 
 }

@@ -4,24 +4,24 @@
 namespace Ra
 {
     /// Data types enum for shader uniforms and buffer elements
-    enum class UniformDataType { None = 0, Float, Float2, Float3, Float4, Mat3, Mat4, Int, Int2, Int3, Int4, Bool };
+    enum class BufferDataType { None = 0, Float, Float2, Float3, Float4, Mat3, Mat4, Int, Int2, Int3, Int4, Bool };
 
     /// Statically evaluates given data type size
-    static std::size_t UniformDataTypeSize(UniformDataType dataType)
+    static std::size_t UniformDataTypeSize(BufferDataType dataType)
     {
         switch (dataType)
         {
-        case UniformDataType::Float: return 4;
-        case UniformDataType::Float2: return 4 * 2;
-        case UniformDataType::Float3: return 4 * 3;
-        case UniformDataType::Float4: return 4 * 4;
-        case UniformDataType::Mat3: return 4 * 3 * 3;
-        case UniformDataType::Mat4: return 4 * 4 * 4;
-        case UniformDataType::Int: return 4;
-        case UniformDataType::Int2: return 4 * 2;
-        case UniformDataType::Int3: return 4 * 3;
-        case UniformDataType::Int4: return 4 * 4;
-        case UniformDataType::Bool: return 1;
+        case BufferDataType::Float: return 4;
+        case BufferDataType::Float2: return 4 * 2;
+        case BufferDataType::Float3: return 4 * 3;
+        case BufferDataType::Float4: return 4 * 4;
+        case BufferDataType::Mat3: return 4 * 3 * 3;
+        case BufferDataType::Mat4: return 4 * 4 * 4;
+        case BufferDataType::Int: return 4;
+        case BufferDataType::Int2: return 4 * 2;
+        case BufferDataType::Int3: return 4 * 3;
+        case BufferDataType::Int4: return 4 * 4;
+        case BufferDataType::Bool: return 1;
         default: return 0;
         }
     }
@@ -33,7 +33,7 @@ namespace Ra
     */
     struct BufferElement
     {
-        UniformDataType DataType;
+        BufferDataType DataType;
         std::string Name;
         size_t Offset;
         size_t Size;
@@ -42,23 +42,23 @@ namespace Ra
         {
             switch (DataType)
             {
-            case UniformDataType::Float:  return 1;
-            case UniformDataType::Float2: return 2;
-            case UniformDataType::Float3: return 3;
-            case UniformDataType::Float4: return 4;
-            case UniformDataType::Int: return 1;
-            case UniformDataType::Int2: return 2;
-            case UniformDataType::Int3: return 3;
-            case UniformDataType::Int4: return 4;
-            case UniformDataType::Mat3: return 3;  // 3xFloat3
-            case UniformDataType::Mat4: return 4;  // 4xFloat4
+            case BufferDataType::Float:  return 1;
+            case BufferDataType::Float2: return 2;
+            case BufferDataType::Float3: return 3;
+            case BufferDataType::Float4: return 4;
+            case BufferDataType::Int: return 1;
+            case BufferDataType::Int2: return 2;
+            case BufferDataType::Int3: return 3;
+            case BufferDataType::Int4: return 4;
+            case BufferDataType::Mat3: return 3;  // 3xFloat3
+            case BufferDataType::Mat4: return 4;  // 4xFloat4
             default:
                 return 0;
                 break;
             }
         }
 
-        BufferElement(const UniformDataType& dataType, const std::string& name)
+        BufferElement(const BufferDataType& dataType, const std::string& name)
             : DataType(dataType), Name(name), Offset(0), Size(UniformDataTypeSize(DataType))
         {}
     };
