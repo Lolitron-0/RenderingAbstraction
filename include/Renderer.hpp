@@ -24,6 +24,8 @@ namespace Ra
 
         /// Initializes scene with given camera
         static void BeginScene(const Camera& camera);
+        /// Initializes scene with given view-projection matrix (for custom camera systems)
+        static void BeginScene(const glm::mat4& viewProjection);
         /// Marks scene as finished
         static void EndScene();
 
