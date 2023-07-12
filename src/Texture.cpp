@@ -15,4 +15,6 @@ namespace Ra
         }
     }
 
+    Ref<Texture> Texture::NullTexture = nullptr;
+
 }

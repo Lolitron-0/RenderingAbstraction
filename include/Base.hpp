@@ -1,4 +1,5 @@
 #pragma once
+#include <filesystem>
 
 namespace Ra
 {
@@ -9,6 +10,7 @@ namespace Ra
     extern ErrorCallbackFn errorCallback;
     
     inline void SetErrorCallback(const ErrorCallbackFn& callback) { errorCallback = callback; }
+    std::string GetShadersDir();
 
     template<class T>
     using Scope = std::unique_ptr<T>;
@@ -20,8 +22,6 @@ namespace Ra
     template<class T, class... Args>
     Ref<T> MakeRef(Args&&... args) { return std::make_shared<T>(std::forward<Args>(args)...); }
 }
-
-#include <filesystem>
 
 #define RA_THROW_ERROR(message) do { Ra::errorCallback(message); }while(0);
 

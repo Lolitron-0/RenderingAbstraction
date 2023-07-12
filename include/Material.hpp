@@ -4,12 +4,17 @@
 
 namespace Ra
 {
+    struct PointLight
+    {
+        glm::vec3 Color{ 1.f };
+    };
+
     class Material
     {
     public:
-        Ref<Texture> DiffuseMap;
-        Ref<Texture> SpecularMap;
-        float Shininess;
+        Ref<Texture> DiffuseMap{ Texture::NullTexture };
+        Ref<Texture> SpecularMap{ Texture::NullTexture };
+        float Shininess{ 32.f };
         float Transparency{ 1.f };
 
         glm::vec3 BaseColor{ .36f };

@@ -20,6 +20,10 @@ namespace Ra
         virtual void SetBool(const std::string name, bool value) = 0;
         /// Uniform float variable setter
         virtual void SetFloat(const std::string name, float value) = 0;
+        /// Uniform 3x3 matrix variable setter
+        virtual void SetMat3(const std::string name, const float* value) = 0;
+        /// Uniform 3x3 matrix variable setter
+        virtual void SetMat3(const std::string name, const glm::mat3& mat) = 0;
         /// Uniform 4x4 matrix variable setter
         virtual void SetMat4(const std::string name, const float* value) = 0;
         /// Uniform 4x4 matrix variable setter

@@ -66,6 +66,9 @@ namespace Ra
         virtual void SetWrap(TextureWrap wrap) = 0;
 
         static Scope<Texture> Create();
+
+        static Ref<Texture> NullTexture;
+
     protected:
         std::uint32_t m_Width{ 0 }, m_Height{ 0 };
         TextureFormat m_Format;

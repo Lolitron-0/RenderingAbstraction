@@ -66,7 +66,7 @@ namespace Ra
 
         glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
         if (!success) {
-            glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
+            glGetShaderInfoLog(fragmentShader, 512, nullptr, infoLog);
             RA_ASSERT(false, "Failed to compile fragment shader!  " + std::string(infoLog));
         }
 
@@ -77,7 +77,7 @@ namespace Ra
 
         glGetProgramiv(m_Handle, GL_LINK_STATUS, &success);
         if (!success) {
-            glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
+            glGetProgramInfoLog(m_Handle, 512, nullptr, infoLog);
             RA_ASSERT(false, "Failed to link shader!  " + std::string(infoLog));
         }
 
@@ -108,6 +108,16 @@ namespace Ra
     void OpenGLShader::SetFloat(const std::string name, float value)
     {
         glUniform1f(glGetUniformLocation(m_Handle, name.c_str()), value);
+    }
+
+    void OpenGLShader::SetMat3(const std::string name, const float* value)
+    {
+        glUniformMatrix3fv(glGetUniformLocation(m_Handle, name.c_str()), 1, GL_FALSE, value);
+    }
+
+    void OpenGLShader::SetMat3(const std::string name, const glm::mat3& mat)
+    {
+        glUniformMatrix3fv(glGetUniformLocation(m_Handle, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
     }
 
     void OpenGLShader::SetMat4(const std::string name, const float* value)

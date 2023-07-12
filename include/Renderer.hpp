@@ -25,7 +25,7 @@ namespace Ra
         /// Initializes scene with given camera
         static void BeginScene(const Camera& camera);
         /// Initializes scene with given view-projection matrix (for custom camera systems)
-        static void BeginScene(const glm::mat4& viewProjection);
+        static void BeginScene(const glm::mat4& viewProjection, const glm::vec3& cameraPosition);
         /// Marks scene as finished
         static void EndScene();
 
@@ -50,6 +50,7 @@ namespace Ra
         static void Submit(const Ref<VertexArray>& vertexArray, const glm::mat4& transform, const Material& material, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
 
         static void DrawCube(const glm::mat4& transform, const Material& material, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
+        static void SubmitPointLight(const PointLight& light, const glm::vec3& position);
 
     private:
         static RendererAPI::API s_RendererAPI;
@@ -57,6 +58,8 @@ namespace Ra
         struct SceneData
         {
             glm::mat4 ViewProjectionMatrix;
+            glm::vec3 CameraPosition;
+            int SubmittedLights{ 0 };
         };
 
         static Scope<SceneData> s_SceneData;
