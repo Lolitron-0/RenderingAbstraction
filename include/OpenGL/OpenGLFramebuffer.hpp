@@ -27,8 +27,8 @@ namespace Ra
         std::vector<RendererId> m_ColorAttachments;
         RendererId m_DepthAttachment{ 0 };
 
-        std::vector<TextureSpecification> m_ColorAttachmentSpecifications;
-        TextureSpecification m_DepthAttachmentSpecification;
+        std::vector<AttachmentSpecification> m_ColorAttachmentSpecifications;
+        AttachmentSpecification m_DepthAttachmentSpecification;
 
         RendererId m_ResolveFramebufferHandle{ 0 };
         RendererId m_ResolvedAttachment{ 0 };

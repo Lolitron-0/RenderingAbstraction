@@ -66,7 +66,7 @@ namespace Ra
 
         glGetShaderiv(fragmentShader, GL_COMPILE_STATUS, &success);
         if (!success) {
-            glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+            glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
             RA_ASSERT(false, "Failed to compile fragment shader!  " + std::string(infoLog));
         }
 
@@ -77,7 +77,7 @@ namespace Ra
 
         glGetProgramiv(m_Handle, GL_LINK_STATUS, &success);
         if (!success) {
-            glGetShaderInfoLog(vertexShader, 512, NULL, infoLog);
+            glGetShaderInfoLog(vertexShader, 512, nullptr, infoLog);
             RA_ASSERT(false, "Failed to link shader!  " + std::string(infoLog));
         }
 

@@ -9,7 +9,7 @@ namespace Ra
     {
         switch (Renderer::GetAPI())
         {
-        case RendererAPI::API::OpenGL: return std::make_unique<OpenGLRendererAPI>();
+        case RendererAPI::API::OpenGL: return MakeScope<OpenGLRendererAPI>();
         default: { RA_ASSERT(false, "No rendering API has been set!"); return nullptr; }
         }
     }

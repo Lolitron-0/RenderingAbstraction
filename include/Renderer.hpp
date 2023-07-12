@@ -1,7 +1,7 @@
 #pragma once
 #include "RendererAPI.hpp"
 #include "Camera.hpp"
-#include "Shader.hpp"
+#include "Material.hpp"
 #include <glm/glm.hpp>
 
 namespace Ra
@@ -44,12 +44,12 @@ namespace Ra
         /**
          * @brief Submits draw command to a renderer
          * @param VertexArray vertex array to draw
-         * @param shader Shader to use for drawing
+         * @param material Material to use for drawing
          * @param mode Drawing mode (e.g. triangles, lines, points, etc.)
         */
-        static void Submit(const Ref<VertexArray>& vertexArray, const Ref<Shader>& shader, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
+        static void Submit(const Ref<VertexArray>& vertexArray, const glm::mat4& transform, const Material& material, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
 
-        static void DrawCube(const glm::mat4& transform, const Ref<Shader>& shader, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
+        static void DrawCube(const glm::mat4& transform, const Material& material, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
 
     private:
         static RendererAPI::API s_RendererAPI;

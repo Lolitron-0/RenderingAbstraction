@@ -32,6 +32,6 @@ namespace Ra
          * @brief Factory method for vertex array creation
          * @return Ref counted object to abstract vertex array interface, nullptr in case of unknown/unset rendering API
         */
-        static Ref<VertexArray> Create();
+        static Scope<VertexArray> Create();
     };
 }

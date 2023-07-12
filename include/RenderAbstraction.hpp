@@ -9,3 +9,4 @@
 #include "RenderCommand.hpp"
 #include "Camera.hpp"
 #include "Mesh.hpp"
+#include "Texture.hpp"

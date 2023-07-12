@@ -152,8 +152,11 @@ namespace Ra
             case TextureFormat::RGBA8:
                 Utils::AttachColorTexture(textureId, GL_RGBA8, GL_RGBA, m_Properties.Width, m_Properties.Height, m_Properties.Samples, i);
                 break;
-            case TextureFormat::RedInteger:
+            case TextureFormat::R32:
                 Utils::AttachColorTexture(textureId, GL_R32I, GL_RED_INTEGER, m_Properties.Width, m_Properties.Height, m_Properties.Samples, i);
+                break;
+            default:
+                RA_ASSERT(false, "Wrong TextureFormat");
                 break;
             }
             m_ColorAttachments.emplace_back(textureId);

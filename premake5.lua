@@ -14,11 +14,15 @@ project "RenderAbstraction"
 		"include/**.h",
 		"include/**.hpp",
 		"src/**.cpp",
+
+		"%{prj.location}/thirdparty/stb_image/**.h",
+		"%{prj.location}/thirdparty/stb_image/**.cpp",
 	}
 
 	includedirs
 	{
 		"include",
+		"%{prj.location}/thirdparty/stb_image/",
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.glm}",

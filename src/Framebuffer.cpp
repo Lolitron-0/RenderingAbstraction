@@ -6,11 +6,11 @@
 namespace Ra
 {
 
-    Ra::Ref<Ra::Framebuffer> Framebuffer::Create(const FramebufferProperties& props)
+    Scope<Framebuffer> Framebuffer::Create(const FramebufferProperties& props)
     {
         switch (Renderer::GetAPI())
         {
-        case RendererAPI::API::OpenGL: return std::make_shared<OpenGLFramebuffer>(props);
+        case RendererAPI::API::OpenGL: return MakeScope<OpenGLFramebuffer>(props);
         default: return nullptr;
         }
     }

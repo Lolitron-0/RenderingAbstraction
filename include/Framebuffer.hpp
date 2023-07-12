@@ -1,39 +1,26 @@
 #pragma once 
 #include "Base.hpp"
+#include "Texture.hpp"
 
 namespace Ra
 {
-    /// Enum for texture formats abstraction
-    enum class TextureFormat
+    /// Data needed for attachment initialization
+    struct AttachmentSpecification
     {
-        RGBA8,
-        RedInteger,
-
-        Depth24Stencil8,
-
-        //defaults
-        Color = RGBA8,
-        Depth = Depth24Stencil8
-    };
-
-    /// Data needed for texture initialization
-    struct TextureSpecification
-    {
-        TextureSpecification() = default;
-        TextureSpecification(TextureFormat format)
+    public:
+        AttachmentSpecification() = default;
+        AttachmentSpecification(TextureFormat format)
             :Format(format)
         {}
 
         TextureFormat Format;
-
-        /*! @todo wrapping/filtering */
     };
 
     /// Framebuffer settings
     struct FramebufferProperties
     {
         std::uint32_t Width, Height;
-        std::vector<TextureSpecification> Attachments;
+        std::vector<AttachmentSpecification> Attachments;
         std::uint32_t Samples = 1;
     };
 
@@ -70,7 +57,7 @@ namespace Ra
 
         virtual const FramebufferProperties& GetProperties() const = 0;
 
-        static Ref<Framebuffer> Create(const FramebufferProperties& props);
+        static Scope<Framebuffer> Create(const FramebufferProperties& props);
     };
 
 }

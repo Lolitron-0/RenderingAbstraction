@@ -5,11 +5,11 @@
 
 namespace Ra
 {
-    Ref<VertexArray> VertexArray::Create()
+    Scope<VertexArray> VertexArray::Create()
     {
         switch (Renderer::GetAPI())
         {
-        case RendererAPI::API::OpenGL: return std::make_shared<OpenGLVertexArray>();
+        case RendererAPI::API::OpenGL: return MakeScope<OpenGLVertexArray>();
         default: { RA_THROW_ERROR("No rendering API has been set!"); return nullptr; }
         }
     }

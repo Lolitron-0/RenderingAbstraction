@@ -6,20 +6,20 @@
 
 namespace Ra
 {
-    Ref<Shader> Shader::Create(const std::string& vertPath, const std::string& fragPath)
+    Scope<Shader> Shader::Create(const std::string& vertPath, const std::string& fragPath)
     {
         switch (Renderer::GetAPI())
         {
-        case RendererAPI::API::OpenGL: return std::make_shared<OpenGLShader>(vertPath, fragPath);
+        case RendererAPI::API::OpenGL: return MakeScope<OpenGLShader>(vertPath, fragPath);
         default: { RA_ASSERT(false, "No rendering API has been set!"); return nullptr; }
         }
     }
 
-    Ref<Shader> Shader::Create(const std::string& shaderPath)
+    Scope<Shader> Shader::Create(const std::string& shaderPath)
     {
         switch (Renderer::GetAPI())
         {
-        case RendererAPI::API::OpenGL: return std::make_shared<OpenGLShader>(shaderPath);
+        case RendererAPI::API::OpenGL: return MakeScope<OpenGLShader>(shaderPath);
         default: { RA_ASSERT(false, "No rendering API has been set!"); return nullptr; }
         }
     }

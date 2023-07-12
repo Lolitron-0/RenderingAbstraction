@@ -133,16 +133,16 @@ namespace Ra
          * @brief Factory method for vertex buffer creation
          * @param size size of the buffer
          * @return Ref counted object to abstract vertex buffer interface, nullptr in case of unknown/unset rendering API
-         * @note If no data provided dynamic drawn buffer will be created (slightly slower rendering)
+         * @note If no data provided dynamic drawn buffer will be created
         */
-        static Ref<VertexBuffer> Create(size_t size);
+        static Scope<VertexBuffer> Create(size_t size);
         /**
          * @brief Factory method for vertex buffer creation
          * @param vertices Pointer to vertex data
          * @param size Size of the buffer
          * @return Ref counted object to abstract vertex buffer interface, nullptr in case of unknown/unset rendering API
         */
-        static Ref<VertexBuffer> Create(const float* vertices, size_t size);
+        static Scope<VertexBuffer> Create(const float* vertices, size_t size);
     };
 
     /// Interface for index buffer object
@@ -163,6 +163,6 @@ namespace Ra
          * @param count Number of indices
          * @return Ref counted object to abstract index buffer interface, nullptr in case of unknown/unset rendering API
         */
-        static Ref<IndexBuffer> Create(const std::uint32_t* indices, std::uint32_t count);
+        static Scope<IndexBuffer> Create(const std::uint32_t* indices, std::uint32_t count);
     };
 }

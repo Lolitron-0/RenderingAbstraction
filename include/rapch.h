@@ -16,3 +16,8 @@
 #include <unordered_set>
 
 #include "Base.hpp"
+
+
+#ifndef STB_IMAGE_IMPLEMENTATION
+    #define STB_IMAGE_IMPLEMENTATION
+#endif 

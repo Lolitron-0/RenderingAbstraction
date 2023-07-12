@@ -39,13 +39,13 @@ namespace Ra
          * @param fragPath Path to fragment source file
          * @return Ref-counted object with created shader. Or nullptr if rendering API is unknown/unset
         */
-        static Ref<Shader> Create(const std::string& vertPath, const std::string& fragPath);
+        static Scope<Shader> Create(const std::string& vertPath, const std::string& fragPath);
         /**
          * @brief Factory static method to create rendering API independent shaders
          * @param shaderPath Path to source file
          * @return Ref-counted object with created shader. Or nullptr if rendering API is unknown/unset
         */
-        static Ref<Shader> Create(const std::string& shaderPath);
+        static Scope<Shader> Create(const std::string& shaderPath);
 
     protected:
         std::string LoadSourceFromFile_(const std::string& path);
