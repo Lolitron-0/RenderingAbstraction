@@ -18,13 +18,16 @@ namespace Ra
 
         enum class DrawMode
         {
-            Points,
+            Points=0,
             Triangles,
             TriangleFan,
             TriangleStrip,
             Lines,
             LineLoop,
             LineStrip,
+
+            Last = LineStrip,
+            Count
         };
 
     public:
