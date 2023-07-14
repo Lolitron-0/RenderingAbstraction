@@ -7,6 +7,7 @@ namespace Ra
     struct PointLight
     {
         glm::vec3 Color{ 1.f };
+        float Intensity{ 1.f };
     };
 
     class Material

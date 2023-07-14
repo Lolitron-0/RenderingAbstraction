@@ -27,6 +27,7 @@ struct Material
 struct PointLight {
 	vec3 Position;
 	vec3 Color;
+	float Intensity;
 };
 
 in vec3 Position;
@@ -81,7 +82,7 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
 
 	//attenuation
 	float distance = length(light.Position - fragPos);
-	float attenuation = 1.0 / (quadratic*(distance*distance) +
+	float attenuation =  light.Intensity * 1.0 / (quadratic*(distance*distance) +
 							   linear*distance + 
 							   constant);
 

@@ -142,6 +142,7 @@ namespace Ra
         Storage.PhongShader->Bind();
         Storage.PhongShader->SetVec3(uniformLightToken + "Position", position);
         Storage.PhongShader->SetVec3(uniformLightToken + "Color", light.Color);
+        Storage.PhongShader->SetFloat(uniformLightToken + "Intensity", light.Intensity);
     }
 
 }
