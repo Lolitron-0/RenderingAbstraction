@@ -26,6 +26,18 @@ namespace Ra
     class Renderer
     {
     public:
+        struct Transform
+        {
+            Transform(const glm::mat4& model)
+                :Model(model), Normal(glm::transpose(glm::inverse(model)))
+            {}
+            Transform(const glm::mat4& model, const glm::mat4& normal)
+                :Model(model), Normal(normal)
+            {}
+            glm::mat4 Model;
+            glm::mat4 Normal;
+        };
+
         static void Init();
         static void Shutdown();
 
@@ -63,9 +75,9 @@ namespace Ra
          * @param material Material to use for drawing
          * @param mode Drawing mode (e.g. triangles, lines, points, etc.)
         */
-        static void Submit(const Ref<VertexArray>& vertexArray, const glm::mat4& transform, const Material& material, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
+        static void Submit(const Ref<VertexArray>& vertexArray, const Transform& transform, const Material& material, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
 
-        static void DrawCube(const glm::mat4& transform, const Material& material, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
+        static void DrawCube(const Transform& transform, const Material& material, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
         static void SubmitPointLight(const PointLight& light, const glm::vec3& position);
 
         static Renderer3DData Storage;

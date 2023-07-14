@@ -113,12 +113,12 @@ namespace Ra
 
     }
 
-    void Renderer::Submit(const Ref<VertexArray>& vertexArray, const glm::mat4& transform, const Material& material, RendererAPI::DrawMode mode)
+    void Renderer::Submit(const Ref<VertexArray>& vertexArray, const Transform& transform, const Material& material, RendererAPI::DrawMode mode)
     {
         Storage.PhongShader->Bind();
         Storage.PhongShader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
-        Storage.PhongShader->SetMat4("u_Model", transform);
-        Storage.PhongShader->SetMat3("u_NormalModel", glm::mat3(glm::transpose(glm::inverse(transform))));
+        Storage.PhongShader->SetMat4("u_Model", transform.Model);
+        Storage.PhongShader->SetMat3("u_NormalModel", transform.Normal);
         material.DiffuseMap->Bind(0);
         material.SpecularMap->Bind(1); 
         Storage.PhongShader->SetVec3("u_Material.BaseColor", material.BaseColor);
@@ -131,7 +131,7 @@ namespace Ra
         RenderCommand::DrawIndexed(vertexArray, mode);
     }
 
-    void Renderer::DrawCube(const glm::mat4& transform, const Material& material, RendererAPI::DrawMode mode)
+    void Renderer::DrawCube(const Transform& transform, const Material& material, RendererAPI::DrawMode mode)
     {
         Submit(Storage.CubeVertexArray, transform, material, mode);
     }
