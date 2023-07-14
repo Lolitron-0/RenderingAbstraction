@@ -6,6 +6,22 @@
 
 namespace Ra
 {
+    class VertexBuffer;
+    class VertexArray;
+    class IndexBuffer;
+    class Shader;
+
+    struct Renderer3DData
+    {
+        Ref<VertexBuffer>   CubeVertexBuffer;
+        Ref<IndexBuffer>    CubeIndexBuffer;
+        Ref<VertexArray>    CubeVertexArray;
+
+        Ref<Shader> PhongShader;
+
+        Material DebugMaterial;
+    };
+
     /// High level rendering commands (Scene level)
     class Renderer
     {
@@ -51,6 +67,8 @@ namespace Ra
 
         static void DrawCube(const glm::mat4& transform, const Material& material, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
         static void SubmitPointLight(const PointLight& light, const glm::vec3& position);
+
+        static Renderer3DData Storage;
 
     private:
         static RendererAPI::API s_RendererAPI;

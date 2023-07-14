@@ -76,8 +76,8 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
 	float spec = pow(max(dot(reflectDir, -viewDir), 0.0), u_Material.Shininess);
 
 	float constant = 1.;
-	float linear = .014;
-	float quadratic = .0007;
+	float linear = .09;
+	float quadratic = .032;
 
 	//attenuation
 	float distance = length(light.Position - fragPos);
