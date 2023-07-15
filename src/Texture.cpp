@@ -15,6 +15,13 @@ namespace Ra
         }
     }
 
+    Scope<Texture> Texture::Create(const std::string& path)
+    {
+        Scope<Texture> ret = Create();
+        ret->LoadFromFile(path);
+        return ret;
+    }
+
     Ref<Texture> Texture::NullTexture = nullptr;
 
 }

@@ -22,6 +22,9 @@ namespace Ra
         void SetMagFilter(TextureFilter filter) override;
         void SetWrap(TextureWrap wrap) override;
 
+
+        RendererId GetNativeTerxtureHandle() const override;
+
     private:
         RendererId m_Handle;
         GLenum m_Target;

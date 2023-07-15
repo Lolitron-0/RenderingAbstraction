@@ -54,6 +54,7 @@ namespace Ra
         Bind();
         int tWidth, tHeight, tNumChannels;
         std::uint8_t* tData = stbi_load(path.c_str(), &tWidth, &tHeight, &tNumChannels, 0);
+        m_Source = path;
 
         RA_ASSERT(tData, stbi_failure_reason());
         Load(tData, tWidth, tHeight, tNumChannels, format);
@@ -89,6 +90,7 @@ namespace Ra
         glTexParameteri(m_Target, GL_TEXTURE_MAG_FILTER, g_TextureFilterTable[(int)this->m_MagFilter]);
         glTexParameteri(m_Target, GL_TEXTURE_WRAP_S, g_TextureWrapTable[(int)this->m_Wrap]);
         glTexParameteri(m_Target, GL_TEXTURE_WRAP_T, g_TextureWrapTable[(int)this->m_Wrap]);
+        glGenerateMipmap(m_Target);
     }
 
     void OpenGLTexture::Bind()
@@ -128,6 +130,11 @@ namespace Ra
         Bind();
         glTexParameteri(m_Target, GL_TEXTURE_WRAP_S, g_TextureWrapTable[(int)this->m_Wrap]);
         glTexParameteri(m_Target, GL_TEXTURE_WRAP_T, g_TextureWrapTable[(int)this->m_Wrap]);
+    }
+
+    Ra::RendererId OpenGLTexture::GetNativeTerxtureHandle() const
+    {
+        return m_Handle;
     }
 
 }

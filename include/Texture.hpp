@@ -60,12 +60,16 @@ namespace Ra
         TextureWrap GetWrap() const { return m_Wrap; }
         TextureFilter GetMinFilter() const { return m_MinFilter; }
         TextureFilter GetMagFilter() const { return m_MagFilter; }
+        std::string GetSource() const { return m_Source; }
+
+        virtual RendererId GetNativeTerxtureHandle() const = 0;
         
         virtual void SetMinFilter(TextureFilter filter) = 0;
         virtual void SetMagFilter(TextureFilter filter) = 0;
         virtual void SetWrap(TextureWrap wrap) = 0;
 
         static Scope<Texture> Create();
+        static Scope<Texture> Create(const std::string& path);
 
         static Ref<Texture> NullTexture;
 
@@ -74,6 +78,7 @@ namespace Ra
         TextureFormat m_Format;
         TextureWrap m_Wrap{ TextureWrap::Repeat };
         TextureFilter m_MinFilter{ TextureFilter::Linear }, m_MagFilter{ TextureFilter::Linear };
+        std::string m_Source{ "Internal resource" };
     };
 
 }
