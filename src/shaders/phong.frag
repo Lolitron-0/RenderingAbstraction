@@ -34,7 +34,8 @@ in vec3 Position;
 in vec2 TexCoord;
 in vec3 Normal;
 
-out vec4 fragmentColor;
+layout(location=0) out vec4 fragmentColor;
+layout(location=1) out int entityId;
 
 uniform vec3 u_CameraPosition;
 uniform Material u_Material;
@@ -52,7 +53,7 @@ void main()
 		base = texture(u_Material.DiffuseMap, TexCoord);
 	}
 	else
-		base = vec4(u_Material.BaseColor,1);
+		base = vec4(u_Material.BaseColor, 1);
 
 	vec3 norm = normalize(Normal);
 	vec3 viewDir = normalize(Position - u_CameraPosition);
@@ -63,6 +64,7 @@ void main()
 	
 	result.a = u_Material.Transparency;
 	fragmentColor = result;
+	entityId = 234;
 }
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 diffuseBase) {

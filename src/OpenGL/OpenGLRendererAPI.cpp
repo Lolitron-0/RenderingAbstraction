@@ -9,8 +9,8 @@ namespace Ra
     {
         switch (severity)
         {
-        case GL_DEBUG_SEVERITY_LOW:
-        case GL_DEBUG_SEVERITY_MEDIUM:
+        //case GL_DEBUG_SEVERITY_LOW:
+        //case GL_DEBUG_SEVERITY_MEDIUM:
         case GL_DEBUG_SEVERITY_HIGH:
             RA_ASSERT(false, message);
             break;

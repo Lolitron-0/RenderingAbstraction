@@ -36,11 +36,11 @@ namespace Ra
 
             if (multisampled)
             {
-                glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, format, width, height, GL_FALSE);
+                glTexImage2DMultisample(GL_TEXTURE_2D_MULTISAMPLE, samples, internalFormat, width, height, GL_FALSE);
             }
             else
             {
-                glTexImage2D(GL_TEXTURE_2D, (GLint)index, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
+                glTexImage2D(GL_TEXTURE_2D, 0, internalFormat, width, height, 0, format, GL_UNSIGNED_BYTE, nullptr);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
@@ -100,15 +100,7 @@ namespace Ra
 
     void OpenGLFramebuffer::StopWriting()
     {
-        if (m_Properties.Samples > 1)
-        {
-            glBindFramebuffer(GL_READ_FRAMEBUFFER, m_MainFramebufferHandle);
-            glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_ResolveFramebufferHandle);
-            glBlitFramebuffer(
-                0, 0, m_Properties.Width, m_Properties.Height,
-                0, 0, m_Properties.Width, m_Properties.Height,
-                GL_COLOR_BUFFER_BIT, GL_NEAREST);
-        }
+        if (m_Properties.Samples > 1) Resolve_();
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }
 
@@ -126,12 +118,28 @@ namespace Ra
 
     Ra::RendererId OpenGLFramebuffer::GetDrawTextureHandle(std::size_t index /*= 0*/) const
     {
-        return m_Properties.Samples > 1 ? m_ResolvedAttachment : m_ColorAttachments[index];
+        return m_Properties.Samples > 1 ? m_ResolvedAttachments[index] : m_ColorAttachments[index];
     }
 
     const Ra::FramebufferProperties& OpenGLFramebuffer::GetProperties() const
     {
         return m_Properties;
+    }
+
+    int OpenGLFramebuffer::ReadPixel(std::uint32_t attachmentIndex, int x, int y, bool leaveBound)
+    {
+        int pixelData;
+        RA_ASSERT(attachmentIndex < m_ColorAttachments.size(), "Attachment index out of bounds!");
+        if (m_Properties.Samples > 1)
+        {
+            Resolve_();
+            glBindFramebuffer(GL_FRAMEBUFFER, m_ResolveFramebufferHandle);
+        }
+        else
+            glBindFramebuffer(GL_FRAMEBUFFER, m_MainFramebufferHandle);
+        glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
+        glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
+        return pixelData;
     }
 
     void OpenGLFramebuffer::Invalidate_()
@@ -141,6 +149,7 @@ namespace Ra
 
         glGenFramebuffers(1, &m_MainFramebufferHandle);
         glBindFramebuffer(GL_FRAMEBUFFER, m_MainFramebufferHandle);
+        m_ColorAttachments.resize(m_ColorAttachmentSpecifications.size());
 
         bool multisampled = m_Properties.Samples > 1;
         for (std::size_t i = 0; i < m_ColorAttachmentSpecifications.size(); i++)
@@ -159,7 +168,7 @@ namespace Ra
                 RA_ASSERT(false, "Wrong TextureFormat");
                 break;
             }
-            m_ColorAttachments.emplace_back(textureId);
+            m_ColorAttachments[i] = textureId;
         }
 
         Utils::CreateTexture(&m_DepthAttachment, m_Properties.Samples > 1);
@@ -170,19 +179,43 @@ namespace Ra
             break;
         }
 
-        auto a = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         RA_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
 
         // Resolve framebuffer
         if (m_Properties.Samples > 1)
         {
+            m_ResolvedAttachments.resize(m_ColorAttachmentSpecifications.size());
             glGenFramebuffers(1, &m_ResolveFramebufferHandle);
             glBindFramebuffer(GL_FRAMEBUFFER, m_ResolveFramebufferHandle);
 
-            Utils::CreateTexture(&m_ResolvedAttachment, false);
-            Utils::AttachColorTexture(m_ResolvedAttachment, GL_RGBA8, GL_RGBA, m_Properties.Width, m_Properties.Height, 1, 0);
-
+            for (std::size_t i = 0; i < m_ColorAttachmentSpecifications.size(); i++)
+            {
+                RendererId textureId;
+                Utils::CreateTexture(&textureId, false);
+                switch (m_ColorAttachmentSpecifications[i].Format)
+                {
+                case TextureFormat::RGBA8:
+                    Utils::AttachColorTexture(textureId, GL_RGBA8, GL_RGBA, m_Properties.Width, m_Properties.Height, 1, i);
+                    break;
+                case TextureFormat::R32:
+                    Utils::AttachColorTexture(textureId, GL_R32I, GL_RED_INTEGER, m_Properties.Width, m_Properties.Height, 1, i);
+                    break;
+                default:
+                    RA_ASSERT(false, "Wrong TextureFormat");
+                    break;
+                }
+                m_ResolvedAttachments.emplace_back(textureId);
+            }
             RA_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Resolve framebuffer is incomplete!");
+        }
+
+        // Specify draw buffers
+        glBindFramebuffer(GL_FRAMEBUFFER, m_MainFramebufferHandle);
+        if (m_ColorAttachments.size() > 1)
+        {
+            RA_ASSERT(m_ColorAttachments.size() <= 4, "Framebuffers support up to 4 color attachments!");
+            GLenum buffers[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 , GL_COLOR_ATTACHMENT2 ,GL_COLOR_ATTACHMENT3 };
+            glDrawBuffers((GLsizei)m_ColorAttachments.size(), buffers);
         }
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
@@ -197,8 +230,19 @@ namespace Ra
         if (m_ResolveFramebufferHandle)
         {
             glDeleteFramebuffers(1, &m_ResolveFramebufferHandle);
-            glDeleteTextures(1, &m_ResolvedAttachment);
+            glDeleteTextures((GLsizei)m_ResolvedAttachments.size(), m_ResolvedAttachments.data());
         }
+    }
+
+    void OpenGLFramebuffer::Resolve_()
+    {
+        glBindFramebuffer(GL_READ_FRAMEBUFFER, m_MainFramebufferHandle);
+        glBindFramebuffer(GL_DRAW_FRAMEBUFFER, m_ResolveFramebufferHandle);
+        glBlitFramebuffer(
+            0, 0, m_Properties.Width, m_Properties.Height,
+            0, 0, m_Properties.Width, m_Properties.Height,
+            GL_COLOR_BUFFER_BIT, GL_NEAREST);
+        glBindFramebuffer(GL_FRAMEBUFFER, m_MainFramebufferHandle);
     }
 
 }

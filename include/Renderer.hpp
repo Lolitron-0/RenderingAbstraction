@@ -2,6 +2,7 @@
 #include "RendererAPI.hpp"
 #include "Camera.hpp"
 #include "Material.hpp"
+#include "ShaderUserData.hpp"
 #include <glm/glm.hpp>
 
 namespace Ra
@@ -20,6 +21,12 @@ namespace Ra
         Ref<Shader> PhongShader;
 
         Material DebugMaterial;
+    };
+
+    struct RendererStats
+    {
+        int DrawCalls{ 0 };
+        int Indices{ 0 };
     };
 
     /// High level rendering commands (Scene level)
@@ -77,12 +84,16 @@ namespace Ra
         */
         static void Submit(const Ref<VertexArray>& vertexArray, const Transform& transform, const Material& material, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
 
-        static void DrawCube(const Transform& transform, const Material& material, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
+        //static void DrawCube(const Transform& transform, const Material& material, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
         static void SubmitPointLight(const PointLight& light, const glm::vec3& position);
+
+        static RendererStats GetStats();
 
         static Renderer3DData Storage;
 
     private:
+        static RendererStats s_Stats;
+
         static RendererAPI::API s_RendererAPI;
 
         struct SceneData

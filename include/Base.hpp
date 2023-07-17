@@ -1,5 +1,6 @@
 #pragma once
 #include <filesystem>
+#include <functional>
 
 namespace Ra
 {
@@ -8,7 +9,7 @@ namespace Ra
     using ErrorCallbackFn = std::function<void(const std::string&)>;
 
     extern ErrorCallbackFn errorCallback;
-    
+
     inline void SetErrorCallback(const ErrorCallbackFn& callback) { errorCallback = callback; }
     std::string GetShadersDir();
 
@@ -43,3 +44,68 @@ namespace Ra
 #else
 #define RA_ASSERT(cond, message)
 #endif // RA_DEBUG
+
+struct NullType {};
+
+template<class... T>
+struct TypeList
+{
+    using Head = NullType;
+    using Tail = NullType;
+};
+
+using EmptyTypeList = TypeList<>;
+
+template<class H, class... T>
+struct TypeList<H, T...>
+{
+    using Head = H;
+    using Tail = TypeList<T...>;
+};
+
+template <class TL>
+struct IsEmpty : std::true_type {};
+
+template <>
+struct IsEmpty<EmptyTypeList> : std::true_type {};
+
+template<class... Args>
+struct IsEmpty<TypeList<Args...>>
+    : std::integral_constant<bool,
+    std::is_same<typename TypeList<Args...>::Head, NullType>::value&&
+    IsEmpty<typename TypeList<Args...>::Tail>::value>  //inheriting whole constant type to have ::value 
+{};
+
+template<class TL>
+struct Length
+    : std::integral_constant<unsigned int, 0>
+{};
+
+template<class... Args>
+struct Length<TypeList<Args...>>
+    : std::integral_constant<unsigned int,
+    IsEmpty<TypeList<Args...>>::value ?
+    0
+    :
+    1 + Length<typename TypeList<Args...>::Tail>::value
+    >
+{};
+
+template<unsigned int N, class TL>
+struct TypeAt
+{
+    using type = NullType;
+};
+
+template<class... Args>
+struct TypeAt<0, TypeList<Args...>>
+{
+    using type = typename TypeList<Args...>::Head;
+};
+
+template<unsigned int N, class... Args>
+struct TypeAt<N, TypeList<Args...>>
+{
+    static_assert(N > Length<TypeList<Args...>>::value);
+    using type = typename TypeAt<N - 1, typename TypeList<Args...>::Tail>::type;
+};

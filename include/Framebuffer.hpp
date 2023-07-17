@@ -51,11 +51,19 @@ namespace Ra
         */
         virtual RendererId GetColorAttachmentHandle(std::size_t index = 0) const = 0;
         /**
-         * @brief Returns a resolved 2d texture in case of multisampled framebuffers and color attachment with given index for others
+         * @brief Returns a resolved 2d texture with given index in case of multisampled framebuffers and color attachment for others
         */
         virtual RendererId GetDrawTextureHandle(std::size_t index = 0) const = 0;
 
         virtual const FramebufferProperties& GetProperties() const = 0;
+
+        /**
+         * @brief Gets pixel value from attachment with given index
+         * @param leaveBound if true main buffer remains bound after call
+         * @return Pixel value
+         * @note Buffer binding is internal so binding manually is not necessary
+        */
+        virtual int ReadPixel(std::uint32_t attachmentIndex, int x, int y, bool leaveBound = true) = 0;
 
         static Scope<Framebuffer> Create(const FramebufferProperties& props);
     };

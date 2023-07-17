@@ -8,6 +8,8 @@
 namespace Ra
 {
 
+    Ra::RendererStats Renderer::s_Stats = {};
+
     RendererAPI::API Renderer::s_RendererAPI = RendererAPI::API::None;
 
     Scope<Ra::Renderer::SceneData> Renderer::s_SceneData = std::make_unique<Renderer::SceneData>();
@@ -99,6 +101,7 @@ namespace Ra
     void Renderer::BeginScene(const Camera& camera)
     {
         s_SceneData->ViewProjectionMatrix = camera.GetViewProjection();
+        s_Stats = {};
     }
 
     void Renderer::BeginScene(const glm::mat4& viewProjection, const glm::vec3& cameraPosition)
@@ -106,21 +109,21 @@ namespace Ra
         s_SceneData->ViewProjectionMatrix = viewProjection;
         s_SceneData->CameraPosition = cameraPosition;
         s_SceneData->SubmittedLights = 0;
+        s_Stats = {};
     }
 
     void Renderer::EndScene()
     {
-
     }
 
-    void Renderer::Submit(const Ref<VertexArray>& vertexArray, const Transform& transform, const Material& material, RendererAPI::DrawMode mode)
+    void Renderer::Submit(const Ref<VertexArray>& vertexArray, const Transform& transform, const Material& material, RendererAPI::DrawMode mode /*= RendererAPI::DrawMode::Triangles*/)
     {
         Storage.PhongShader->Bind();
         Storage.PhongShader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
         Storage.PhongShader->SetMat4("u_Model", transform.Model);
         Storage.PhongShader->SetMat3("u_NormalModel", transform.Normal);
         material.DiffuseMap->Bind(0);
-        material.SpecularMap->Bind(1); 
+        material.SpecularMap->Bind(1);
         Storage.PhongShader->SetVec3("u_Material.BaseColor", material.BaseColor);
         Storage.PhongShader->SetFloat("u_Material.Shininess", material.Shininess);
         Storage.PhongShader->SetFloat("u_Material.Transparency", material.Transparency);
@@ -129,12 +132,14 @@ namespace Ra
         Storage.PhongShader->SetVec3("u_CameraPosition", s_SceneData->CameraPosition);
 
         RenderCommand::DrawIndexed(vertexArray, mode);
+        s_Stats.DrawCalls += 1;
+        s_Stats.Indices += vertexArray->GetIndexBufer()->GetCount();
     }
 
-    void Renderer::DrawCube(const Transform& transform, const Material& material, RendererAPI::DrawMode mode)
-    {
-        Submit(Storage.CubeVertexArray, transform, material, mode);
-    }
+    //void Renderer::DrawCube(const Transform& transform, const Material& material, RendererAPI::DrawMode mode)
+    //{
+    //    Submit(Storage.CubeVertexArray, transform, material, mode);
+    //}
 
     void Renderer::SubmitPointLight(const PointLight& light, const glm::vec3& position)
     {
@@ -143,6 +148,11 @@ namespace Ra
         Storage.PhongShader->SetVec3(uniformLightToken + "Position", position);
         Storage.PhongShader->SetVec3(uniformLightToken + "Color", light.Color);
         Storage.PhongShader->SetFloat(uniformLightToken + "Intensity", light.Intensity);
+    }
+
+    Ra::RendererStats Renderer::GetStats()
+    {
+        return s_Stats;
     }
 
 }

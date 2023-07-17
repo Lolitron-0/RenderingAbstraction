@@ -19,9 +19,12 @@ namespace Ra
 
         const FramebufferProperties& GetProperties() const override;
 
+        int ReadPixel(std::uint32_t attachmentIndex, int x, int y, bool leaveBound = true) override;
+
     private:
         void Invalidate_();
         void Cleanup_();
+        void Resolve_();
 
         RendererId m_MainFramebufferHandle{ 0 };
         std::vector<RendererId> m_ColorAttachments;
@@ -31,7 +34,7 @@ namespace Ra
         AttachmentSpecification m_DepthAttachmentSpecification;
 
         RendererId m_ResolveFramebufferHandle{ 0 };
-        RendererId m_ResolvedAttachment{ 0 };
+        std::vector<RendererId> m_ResolvedAttachments;
 
         FramebufferProperties m_Properties;
     };
