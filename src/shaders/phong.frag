@@ -16,10 +16,20 @@ bool textureValid(sampler2D tex)
 
 struct Material 
 {
-	sampler2D DiffuseMap;
-	sampler2D SpecularMap;
+	sampler2D DiffuseMap1;
+	sampler2D DiffuseMap2;
+	sampler2D DiffuseMap3;
+	sampler2D DiffuseMap4;
+	sampler2D SpecularMap1;
+	sampler2D SpecularMap2;
+	sampler2D SpecularMap3;
+	sampler2D SpecularMap4;
+	sampler2D NormalMap1;
+	sampler2D NormalMap2;
+	sampler2D NormalMap3;
+	sampler2D NormalMap4;
 	vec3 BaseColor;
-	float Transparency;
+	float Opacity;
 	float Shininess;
 };
 
@@ -48,9 +58,9 @@ void main()
 {
 	vec4 result = vec4(0,0,0,0);
 	vec4 base;
-	if (textureSize(u_Material.DiffuseMap, 0) != ivec2(1,1))
+	if (textureSize(u_Material.DiffuseMap1, 0) != ivec2(1,1))
 	{
-		base = texture(u_Material.DiffuseMap, TexCoord);
+		base = texture(u_Material.DiffuseMap1, TexCoord);
 	}
 	else
 		base = vec4(u_Material.BaseColor, 1);
@@ -62,7 +72,7 @@ void main()
 		result += vec4(CalcPointLight(u_PointLights[i], norm, Position, viewDir, vec3(base)), 1.);
 	}
 	
-	result.a = u_Material.Transparency;
+	result.a = u_Material.Opacity;
 	fragmentColor = result;
 	entityId = 234;
 }
@@ -84,19 +94,19 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
 
 	//attenuation
 	float distance = length(light.Position - fragPos);
-	float attenuation =  light.Intensity * 1.0 / (quadratic*(distance*distance) +
+	float attenuation =  1.0 / (quadratic*(distance*distance) +
 							   linear*distance + 
 							   constant);
 
 
 	vec3 ambient =  attenuation * light.Color * .2 * diffuseBase;
-	vec3 diffuse =  attenuation * light.Color * .5 * (diff * diffuseBase);
+	vec3 diffuse =  light.Intensity *attenuation * light.Color * .5 * (diff * diffuseBase);
 	vec3 specBase;
-	if (textureValid(u_Material.SpecularMap))
-		specBase = vec3(texture(u_Material.SpecularMap, TexCoord));
+	if (textureValid(u_Material.SpecularMap1))
+		specBase = vec3(texture(u_Material.SpecularMap1, TexCoord));
 	else
 		specBase = diffuseBase;
-	vec3 specular = attenuation * vec3(1,1,1) * (spec * specBase);
+	vec3 specular = light.Intensity * attenuation * vec3(1,1,1) * (spec * specBase);
 
 	return (ambient + diffuse + specular);
 }

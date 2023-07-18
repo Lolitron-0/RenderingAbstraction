@@ -10,16 +10,19 @@ namespace Ra
         float Intensity{ 1.f }; // @todo split
     };
 
+    class Shader;
+
     class Material
     {
     public:
-        Ref<Texture> DiffuseMap{ Texture::NullTexture };
-        Ref<Texture> SpecularMap{ Texture::NullTexture };
+        void LoadTo(const Ref<Shader>& shader) const;
+
         float Shininess{ 32.f };
-        float Transparency{ 1.f };
+        float Opacity{ 1.f };
 
         glm::vec3 BaseColor{ .36f };
         std::string Name{ "Default material" };
+        std::vector<Ref<Texture>> Textures{};
     };
 
 }

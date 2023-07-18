@@ -3,7 +3,8 @@
 
 namespace Ra
 {
-    ErrorCallbackFn errorCallback = [](const std::string&) {};
+    CallbackFn errorCallback = [](const std::string&) {};
+    CallbackFn logCallback = [](const std::string&) {};
 
     std::string GetShadersDir()
     {

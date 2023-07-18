@@ -82,7 +82,7 @@ namespace Ra
             if (Utils::IsDepthFormat(spec.Format))
                 m_DepthAttachmentSpecification = spec;
             else
-                m_ColorAttachmentSpecifications.emplace_back(spec);
+                m_ColorAttachmentSpecifications.push_back(spec);
         }
         Invalidate_();
     }
@@ -204,7 +204,7 @@ namespace Ra
                     RA_ASSERT(false, "Wrong TextureFormat");
                     break;
                 }
-                m_ResolvedAttachments.emplace_back(textureId);
+                m_ResolvedAttachments.push_back(textureId);
             }
             RA_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Resolve framebuffer is incomplete!");
         }

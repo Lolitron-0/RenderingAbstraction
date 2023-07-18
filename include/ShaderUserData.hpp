@@ -13,7 +13,7 @@ namespace Ra
         {
             for (std::uint32_t i{0}; i < size; i++)
             {
-                m_Data.emplace_back(std::make_pair(names[i], data[i]));
+                m_Data.push_back(std::make_pair(names[i], data[i]));
             }
         }
 

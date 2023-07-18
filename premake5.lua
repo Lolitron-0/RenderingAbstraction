@@ -26,17 +26,20 @@ project "RenderAbstraction"
 		"%{IncludeDir.Glad}",
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.glm}",
+		"%{prj.location}/thirdparty/assimp/include/",
 	}
 
 	defines
 	{
 		"GLFW_INCLUDE_NONE",
 	}
-
+ 
 	links
 	{
 		"Glad",
 		"GLFW",
+		"%{prj.location}/thirdparty/assimp/lib/Debug/assimp-vc143-mtd.lib",
+		"%{prj.location}/thirdparty/assimp/contrib/zlib/Debug/zlibstaticd.lib",
 	}
 
 	filter "system:windows"

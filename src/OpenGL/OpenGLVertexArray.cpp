@@ -90,6 +90,8 @@ namespace Ra
             }
         }
         m_VertexBuffers.push_back(buffer);
+        buffer->Unbind();
+        Unbind();
     }
 
     void OpenGLVertexArray::SetIndexBuffer(const Ref<IndexBuffer>& buffer)
@@ -98,6 +100,7 @@ namespace Ra
         buffer->Bind();
 
         m_IndexBuffer = buffer;
+        Unbind();
     }
 
     std::vector<Ra::Ref<Ra::VertexBuffer>> OpenGLVertexArray::GetVertexBuffers() const

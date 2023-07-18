@@ -27,7 +27,7 @@ namespace Ra
         s_RendererAPI->Clear();
     }
 
-    void RenderCommand::DrawIndexed(const Ref<VertexArray>& array, RendererAPI::DrawMode mode, std::uint32_t indexCount /*= 0*/)
+    void RenderCommand::DrawIndexed(const Ref<VertexArray>& array, RendererAPI::DrawMode mode, std::size_t indexCount /*= 0*/)
     {
         s_RendererAPI->DrawIndexed(array, mode, indexCount ? indexCount : array->GetIndexBufer()->GetCount());
     }

@@ -6,11 +6,14 @@ namespace Ra
 {
     using RendererId = std::uint32_t;
 
-    using ErrorCallbackFn = std::function<void(const std::string&)>;
+    using CallbackFn = std::function<void(const std::string&)>;
 
-    extern ErrorCallbackFn errorCallback;
+    extern CallbackFn errorCallback;
+    extern CallbackFn logCallback;
 
-    inline void SetErrorCallback(const ErrorCallbackFn& callback) { errorCallback = callback; }
+    inline void SetErrorCallback(const CallbackFn& callback) { errorCallback = callback; }
+    inline void SetLogCallback(const CallbackFn& callback) { logCallback = callback; }
+
     std::string GetShadersDir();
 
     template<class T>
@@ -25,6 +28,7 @@ namespace Ra
 }
 
 #define RA_THROW_ERROR(message) do { Ra::errorCallback(message); }while(0);
+#define RA_LOG(message) do { Ra::logCallback(message); }while(0);
 
 #ifdef RA_WINDOWS
 #define RA_DEBUGBREAK __debugbreak();

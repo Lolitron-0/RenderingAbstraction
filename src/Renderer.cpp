@@ -4,23 +4,25 @@
 #include "Buffer.hpp"
 #include "VertexArray.hpp"
 #include "Shader.hpp"
+#include "Mesh.hpp"
 
 namespace Ra
 {
 
-    Ra::RendererStats Renderer::s_Stats = {};
+    Ra::RendererStats Renderer::s_Stats{};
 
     RendererAPI::API Renderer::s_RendererAPI = RendererAPI::API::None;
 
     Scope<Ra::Renderer::SceneData> Renderer::s_SceneData = std::make_unique<Renderer::SceneData>();
 
-    Ra::Renderer3DData Renderer::Storage;
+    Ra::Renderer3DData Renderer::Storage{};
+
+    std::vector<Ra::Ref<Ra::Texture>> Renderer::LoadedTextures{};
 
     void Renderer::Init()
     {
-        Texture::NullTexture = Texture::Create();
         std::uint8_t nullTexData[] = { 255,255,255,0 };
-        Texture::NullTexture->Load(nullTexData, 1, 1, 4);
+        Texture::NullTexture = Texture::Create(nullTexData, 1, 1, 4);
 
 
         if (s_RendererAPI != RendererAPI::API::None)
@@ -116,17 +118,12 @@ namespace Ra
     {
     }
 
-    void Renderer::Submit(const Ref<VertexArray>& vertexArray, const Transform& transform, const Material& material, RendererAPI::DrawMode mode /*= RendererAPI::DrawMode::Triangles*/)
+    void Renderer::Submit(const Ref<VertexArray>& vertexArray, const Transform& transform, RendererAPI::DrawMode mode /*= RendererAPI::DrawMode::Triangles*/)
     {
         Storage.PhongShader->Bind();
         Storage.PhongShader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
         Storage.PhongShader->SetMat4("u_Model", transform.Model);
         Storage.PhongShader->SetMat3("u_NormalModel", transform.Normal);
-        material.DiffuseMap->Bind(0);
-        material.SpecularMap->Bind(1);
-        Storage.PhongShader->SetVec3("u_Material.BaseColor", material.BaseColor);
-        Storage.PhongShader->SetFloat("u_Material.Shininess", material.Shininess);
-        Storage.PhongShader->SetFloat("u_Material.Transparency", material.Transparency);
         RA_ASSERT(s_SceneData->SubmittedLights <= 128, "Too many point lights!");
         Storage.PhongShader->SetInt("u_PointLightsCount", s_SceneData->SubmittedLights);
         Storage.PhongShader->SetVec3("u_CameraPosition", s_SceneData->CameraPosition);
@@ -134,6 +131,16 @@ namespace Ra
         RenderCommand::DrawIndexed(vertexArray, mode);
         s_Stats.DrawCalls += 1;
         s_Stats.Indices += vertexArray->GetIndexBufer()->GetCount();
+    }
+
+    void Renderer::Submit(Mesh& mesh, const Transform& transform, RendererAPI::DrawMode mode /*= RendererAPI::DrawMode::Triangles*/)
+    {
+        auto& subMeshes = mesh.GetSubMeshes();
+        for (auto& it : subMeshes)
+        {
+            it.GetMaterial().LoadTo(Storage.PhongShader);
+            Submit(it.GetVertexArray(), transform, mode);
+        }
     }
 
     //void Renderer::DrawCube(const Transform& transform, const Material& material, RendererAPI::DrawMode mode)

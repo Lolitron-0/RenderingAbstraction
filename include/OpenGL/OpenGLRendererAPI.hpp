@@ -14,7 +14,7 @@ namespace Ra
 
         void SetViewport(std::uint32_t x, std::uint32_t y, std::uint32_t width, std::uint32_t height) override;
 
-        void DrawIndexed(const Ref<VertexArray>& array, DrawMode mode, std::uint32_t indexCount) override;
+        void DrawIndexed(const Ref<VertexArray>& array, DrawMode mode, std::size_t indexCount) override;
 
     protected:
         int ToAPIDrawMode_(RendererAPI::DrawMode mode) override;

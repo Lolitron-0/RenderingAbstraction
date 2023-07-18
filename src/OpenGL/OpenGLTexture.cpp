@@ -1,6 +1,7 @@
 #include "rapch.h"
 #include "OpenGL/OpenGLTexture.hpp"
 #include <stb_image/stb_image.h>
+#include "Renderer.hpp"
 
 namespace Ra
 {
@@ -47,7 +48,7 @@ namespace Ra
         glDeleteTextures(1, &m_Handle);
     }
 
-    void OpenGLTexture::LoadFromFile(const std::string& path, TextureFormat format /*= TextureFormat::Color*/)
+    void OpenGLTexture::LoadFromFile_(const std::string& path, TextureFormat format /*= TextureFormat::Color*/, TextureType type)
     {
         this->m_Format = format;
 
@@ -57,11 +58,14 @@ namespace Ra
         m_Source = path;
 
         RA_ASSERT(tData, stbi_failure_reason());
-        Load(tData, tWidth, tHeight, tNumChannels, format);
+        LoadFromData_(tData, tWidth, tHeight, tNumChannels, format);
+
+        stbi_image_free(tData);
     }
 
-    void OpenGLTexture::Load(std::uint8_t* rawData, std::uint32_t width, std::uint32_t height, std::uint32_t channels, TextureFormat format /*= TextureFormat::Color*/)
+    void OpenGLTexture::LoadFromData_(std::uint8_t* rawData, std::uint32_t width, std::uint32_t height, std::uint32_t channels, TextureFormat format /*= TextureFormat::Color*/, TextureType type)
     {
+        m_Type = type;
         Bind();
         this->m_Width = width;
         this->m_Height = height;

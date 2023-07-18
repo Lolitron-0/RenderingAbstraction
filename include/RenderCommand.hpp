@@ -22,7 +22,7 @@ namespace Ra
         static void Clear();
 
         /// Draws given VertexArray using chosen DrawMode. Optionally index count can be specified so not all vertices will be drawn
-        static void DrawIndexed(const Ref<VertexArray>& array, RendererAPI::DrawMode mode, std::uint32_t indexCount = 0);
+        static void DrawIndexed(const Ref<VertexArray>& array, RendererAPI::DrawMode mode, std::size_t indexCount = 0);
 
     private:
         static Scope<RendererAPI> s_RendererAPI;

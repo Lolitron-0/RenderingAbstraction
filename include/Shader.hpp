@@ -15,27 +15,27 @@ namespace Ra
         virtual void Unbind() = 0;
 
         /// Uniform int variable setter
-        virtual void SetInt(const std::string name, int value) = 0;
+        virtual void SetInt(const std::string& name, int value) = 0;
         /// Uniform bool variable setter
-        virtual void SetBool(const std::string name, bool value) = 0;
+        virtual void SetBool(const std::string& name, bool value) = 0;
         /// Uniform float variable setter
-        virtual void SetFloat(const std::string name, float value) = 0;
+        virtual void SetFloat(const std::string& name, float value) = 0;
         /// Uniform 3x3 matrix variable setter
-        virtual void SetMat3(const std::string name, const float* value) = 0;
+        virtual void SetMat3(const std::string& name, const float* value) = 0;
         /// Uniform 3x3 matrix variable setter
-        virtual void SetMat3(const std::string name, const glm::mat3& mat) = 0;
+        virtual void SetMat3(const std::string& name, const glm::mat3& mat) = 0;
         /// Uniform 4x4 matrix variable setter
-        virtual void SetMat4(const std::string name, const float* value) = 0;
+        virtual void SetMat4(const std::string& name, const float* value) = 0;
         /// Uniform 4x4 matrix variable setter
-        virtual void SetMat4(const std::string name, const glm::mat4& mat) = 0;
+        virtual void SetMat4(const std::string& name, const glm::mat4& mat) = 0;
         /// Uniform vec3 variable setter
-        virtual void SetVec3(const std::string name, const glm::vec3& vec) = 0;
+        virtual void SetVec3(const std::string& name, const glm::vec3& vec) = 0;
         /// Uniform vec3 variable setter
-        virtual void SetVec3(const std::string name, float x, float y, float z) = 0;
+        virtual void SetVec3(const std::string& name, float x, float y, float z) = 0;
         /// Uniform vec4 variable setter
-        virtual void SetVec4(const std::string name, const glm::vec4& vec) = 0;
+        virtual void SetVec4(const std::string& name, const glm::vec4& vec) = 0;
         /// Uniform vec4 variable setter
-        virtual void SetVec4(const std::string name, float x, float y, float z, float w) = 0;
+        virtual void SetVec4(const std::string& name, float x, float y, float z, float w) = 0;
 
         /**
          * @brief Factory static method to create rendering API independent shaders

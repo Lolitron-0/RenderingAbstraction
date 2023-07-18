@@ -12,7 +12,7 @@ namespace Ra
         glBufferData(GL_ARRAY_BUFFER, size, nullptr, GL_DYNAMIC_DRAW);
     }
 
-    OpenGLVertexBuffer::OpenGLVertexBuffer(const float* vertices, size_t size)
+    OpenGLVertexBuffer::OpenGLVertexBuffer(const void* vertices, size_t size)
     {
         glGenBuffers(1, &m_Handle);
         Bind();
@@ -49,7 +49,7 @@ namespace Ra
     /* IndexBuffer                                                          */
     /************************************************************************/
 
-    OpenGLIndexBuffer::OpenGLIndexBuffer(const std::uint32_t* indices, std::uint32_t count)
+    OpenGLIndexBuffer::OpenGLIndexBuffer(const std::uint32_t* indices, std::size_t count)
         :m_Count(count)
     {
         glGenBuffers(1, &m_Handle);

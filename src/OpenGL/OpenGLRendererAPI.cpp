@@ -32,6 +32,7 @@ namespace Ra
         glEnable(GL_DEPTH_TEST);
         glEnable(GL_LINE_SMOOTH);
         glEnable(GL_MULTISAMPLE);
+        glPointSize(10);
     }
 
     void OpenGLRendererAPI::SetClearColor(const glm::vec4& color)
@@ -49,11 +50,10 @@ namespace Ra
         glViewport(x, y, width, height);
     }
 
-    void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& array, DrawMode mode, std::uint32_t indexCount)
+    void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& array, DrawMode mode, std::size_t indexCount)
     {
         array->Bind();
-        glPointSize(10);
-        glDrawElements(ToAPIDrawMode_(mode), indexCount+1, GL_UNSIGNED_INT, nullptr);
+        glDrawElements(ToAPIDrawMode_(mode), (GLsizei)indexCount, GL_UNSIGNED_INT, nullptr);
     }
 
     int OpenGLRendererAPI::ToAPIDrawMode_(RendererAPI::DrawMode mode)

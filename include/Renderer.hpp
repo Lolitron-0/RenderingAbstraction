@@ -11,6 +11,7 @@ namespace Ra
     class VertexArray;
     class IndexBuffer;
     class Shader;
+    class Mesh;
 
     struct Renderer3DData
     {
@@ -26,7 +27,7 @@ namespace Ra
     struct RendererStats
     {
         int DrawCalls{ 0 };
-        int Indices{ 0 };
+        std::size_t Indices{ 0 };
     };
 
     /// High level rendering commands (Scene level)
@@ -82,7 +83,9 @@ namespace Ra
          * @param material Material to use for drawing
          * @param mode Drawing mode (e.g. triangles, lines, points, etc.)
         */
-        static void Submit(const Ref<VertexArray>& vertexArray, const Transform& transform, const Material& material, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
+        static void Submit(const Ref<VertexArray>& vertexArray, const Transform& transform, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
+        
+        static void Submit(Mesh& mesh, const Transform& transform, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
 
         //static void DrawCube(const Transform& transform, const Material& material, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
         static void SubmitPointLight(const PointLight& light, const glm::vec3& position);
@@ -90,6 +93,7 @@ namespace Ra
         static RendererStats GetStats();
 
         static Renderer3DData Storage;
+        static std::vector<Ref<Texture>> LoadedTextures;
 
     private:
         static RendererStats s_Stats;

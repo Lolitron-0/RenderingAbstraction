@@ -95,57 +95,57 @@ namespace Ra
         glUseProgram(0);
     }
 
-    void OpenGLShader::SetInt(const std::string name, int value)
+    void OpenGLShader::SetInt(const std::string& name, int value)
     {
         glUniform1i(glGetUniformLocation(m_Handle, name.c_str()), value);
     }
 
-    void OpenGLShader::SetBool(const std::string name, bool value)
+    void OpenGLShader::SetBool(const std::string& name, bool value)
     {
         glUniform1i(glGetUniformLocation(m_Handle, name.c_str()), (int)value);
     }
 
-    void OpenGLShader::SetFloat(const std::string name, float value)
+    void OpenGLShader::SetFloat(const std::string& name, float value)
     {
         glUniform1f(glGetUniformLocation(m_Handle, name.c_str()), value);
     }
 
-    void OpenGLShader::SetMat3(const std::string name, const float* value)
+    void OpenGLShader::SetMat3(const std::string& name, const float* value)
     {
         glUniformMatrix3fv(glGetUniformLocation(m_Handle, name.c_str()), 1, GL_FALSE, value);
     }
 
-    void OpenGLShader::SetMat3(const std::string name, const glm::mat3& mat)
+    void OpenGLShader::SetMat3(const std::string& name, const glm::mat3& mat)
     {
         glUniformMatrix3fv(glGetUniformLocation(m_Handle, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
     }
 
-    void OpenGLShader::SetMat4(const std::string name, const float* value)
+    void OpenGLShader::SetMat4(const std::string& name, const float* value)
     {
         glUniformMatrix4fv(glGetUniformLocation(m_Handle, name.c_str()), 1, GL_FALSE, value);
     }
 
-    void OpenGLShader::SetMat4(const std::string name, const glm::mat4& mat)
+    void OpenGLShader::SetMat4(const std::string& name, const glm::mat4& mat)
     {
         glUniformMatrix4fv(glGetUniformLocation(m_Handle, name.c_str()), 1, GL_FALSE, glm::value_ptr(mat));
     }
 
-    void OpenGLShader::SetVec3(const std::string name, const glm::vec3& vec)
+    void OpenGLShader::SetVec3(const std::string& name, const glm::vec3& vec)
     {
         glUniform3fv(glGetUniformLocation(m_Handle, name.c_str()), 1, &vec[0]);
     }
 
-    void OpenGLShader::SetVec3(const std::string name, float x, float y, float z)
+    void OpenGLShader::SetVec3(const std::string& name, float x, float y, float z)
     {
         glUniform3f(glGetUniformLocation(m_Handle, name.c_str()), x, y, z);
     }
 
-    void OpenGLShader::SetVec4(const std::string name, const glm::vec4& vec)
+    void OpenGLShader::SetVec4(const std::string& name, const glm::vec4& vec)
     {
         glUniform4fv(glGetUniformLocation(m_Handle, name.c_str()), 1, &vec[0]);
     }
 
-    void OpenGLShader::SetVec4(const std::string name, float x, float y, float z, float w)
+    void OpenGLShader::SetVec4(const std::string& name, float x, float y, float z, float w)
     {
         glUniform4f(glGetUniformLocation(m_Handle, name.c_str()), x, y, z, w);
     }

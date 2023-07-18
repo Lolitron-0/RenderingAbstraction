@@ -124,7 +124,7 @@ namespace Ra
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
 
-        virtual void SetData(const void* data, size_t size) = 0;
+        virtual void SetData(const void* data, std::size_t size) = 0;
 
         virtual void SetLayout(const BufferLayout& layout) = 0;
         virtual BufferLayout GetLayout() const = 0;
@@ -135,14 +135,14 @@ namespace Ra
          * @return Ref counted object to abstract vertex buffer interface, nullptr in case of unknown/unset rendering API
          * @note If no data provided dynamic drawn buffer will be created
         */
-        static Scope<VertexBuffer> Create(size_t size);
+        static Scope<VertexBuffer> Create(std::size_t size);
         /**
          * @brief Factory method for vertex buffer creation
-         * @param vertices Pointer to vertex data
+         * @param data Pointer to vertex data
          * @param size Size of the buffer
          * @return Ref counted object to abstract vertex buffer interface, nullptr in case of unknown/unset rendering API
         */
-        static Scope<VertexBuffer> Create(const float* vertices, size_t size);
+        static Scope<VertexBuffer> Create(const void* data, std::size_t size);
     };
 
     /// Interface for index buffer object
@@ -155,7 +155,7 @@ namespace Ra
         virtual void Unbind() = 0;
 
         /// Returns the number of indices stored
-        virtual std::uint32_t GetCount() const = 0;
+        virtual std::size_t GetCount() const = 0;
 
         /**
          * @brief Factory method for index buffer creation
@@ -163,6 +163,6 @@ namespace Ra
          * @param count Number of indices
          * @return Ref counted object to abstract index buffer interface, nullptr in case of unknown/unset rendering API
         */
-        static Scope<IndexBuffer> Create(const std::uint32_t* indices, std::uint32_t count);
+        static Scope<IndexBuffer> Create(const std::uint32_t* indices, std::size_t count);
     };
 }

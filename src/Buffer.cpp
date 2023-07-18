@@ -5,7 +5,7 @@
 
 namespace Ra
 {
-    Scope<VertexBuffer> VertexBuffer::Create(size_t size)
+    Scope<VertexBuffer> VertexBuffer::Create(std::size_t size)
     {
         switch (Renderer::GetAPI())
         {
@@ -14,20 +14,20 @@ namespace Ra
         }
     }
 
-    Scope<VertexBuffer> VertexBuffer::Create(const float* vertices, size_t size)
+    Scope<VertexBuffer> VertexBuffer::Create(const void* data, std::size_t size)
     {
         switch (Renderer::GetAPI())
         {
-        case RendererAPI::API::OpenGL: return MakeScope<OpenGLVertexBuffer>(vertices, size);
+        case RendererAPI::API::OpenGL: return MakeScope<OpenGLVertexBuffer>(data, size);
         default: return nullptr;
         }
     }
 
-    Scope<IndexBuffer> IndexBuffer::Create(const uint32_t* indices, uint32_t size)
+    Scope<IndexBuffer> IndexBuffer::Create(const uint32_t* indices, std::size_t count)
     {
         switch (Renderer::GetAPI())
         {
-        case RendererAPI::API::OpenGL: return MakeScope<OpenGLIndexBuffer>(indices, size);
+        case RendererAPI::API::OpenGL: return MakeScope<OpenGLIndexBuffer>(indices, count);
         default: return nullptr;
         }
     }
