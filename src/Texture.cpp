@@ -2,12 +2,14 @@
 #include "Texture.hpp"
 #include "Renderer.hpp"
 #include "OpenGL/OpenGLTexture.hpp"
+#include <Profiler.hpp>
 
 namespace Ra
 {
 
     Ref<Texture> Texture::Create(const std::string& path, TextureFormat format, TextureType type)
     {
+        PROFILER_SCOPE("Texture::Create(file)")
         Ref<Texture> ret;
         switch (Renderer::GetAPI())
         {
@@ -23,8 +25,11 @@ namespace Ra
             != Renderer::LoadedTextures.end())
             return *sameIt;
 
-        ret->LoadFromFile_(path, format, type);
-        Renderer::LoadedTextures.push_back(ret);
+        {
+            PROFILER_SCOPE("Texture: creating from file " + path)
+            ret->LoadFromFile_(path, format, type);
+            Renderer::LoadedTextures.push_back(ret);
+        }
         return ret;
     }
 
@@ -36,8 +41,10 @@ namespace Ra
         case RendererAPI::API::OpenGL: ret = MakeScope<OpenGLTexture>(); break;
         default: ret = nullptr; break;
         }
-        ret->LoadFromData_(rawData, width, height, channels, format, type);
-
+        {
+            PROFILER_SCOPE("Texture: creating from data")
+            ret->LoadFromData_(rawData, width, height, channels, format, type);
+        }
         return ret;
     }
 

@@ -1,3 +1,7 @@
 [submodule "thirdparty/assimp"]
 	path = thirdparty/assimp
 	url = https://github.com/assimp/assimp
+[submodule "thirdparty/Profiler"]
+	path = thirdparty/Profiler
+	url = https://github.com/Lolitron-0/Profiler
+	branch = master

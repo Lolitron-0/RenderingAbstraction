@@ -25,7 +25,9 @@ namespace Ra
     using Ref = std::shared_ptr<T>;
     template<class T, class... Args>
     Ref<T> MakeRef(Args&&... args) { return std::make_shared<T>(std::forward<Args>(args)...); }
+
 }
+struct NullType {};
 
 #define RA_THROW_ERROR(message) do { Ra::errorCallback(message); }while(0);
 #define RA_LOG(message) do { Ra::logCallback(message); }while(0);
@@ -49,7 +51,6 @@ namespace Ra
 #define RA_ASSERT(cond, message)
 #endif // RA_DEBUG
 
-struct NullType {};
 
 template<class... T>
 struct TypeList

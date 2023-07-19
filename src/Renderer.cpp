@@ -5,10 +5,10 @@
 #include "VertexArray.hpp"
 #include "Shader.hpp"
 #include "Mesh.hpp"
+#include <Profiler.hpp>
 
 namespace Ra
 {
-
     Ra::RendererStats Renderer::s_Stats{};
 
     RendererAPI::API Renderer::s_RendererAPI = RendererAPI::API::None;
@@ -21,6 +21,7 @@ namespace Ra
 
     void Renderer::Init()
     {
+        PROFILER_SCOPE("Renderer::Init()");
         std::uint8_t nullTexData[] = { 255,255,255,0 };
         Texture::NullTexture = Texture::Create(nullTexData, 1, 1, 4);
 
@@ -120,6 +121,7 @@ namespace Ra
 
     void Renderer::Submit(const Ref<VertexArray>& vertexArray, const Transform& transform, RendererAPI::DrawMode mode /*= RendererAPI::DrawMode::Triangles*/)
     {
+        PROFILER_SCOPE("Renderer::Submit( VertexArray )");
         Storage.PhongShader->Bind();
         Storage.PhongShader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
         Storage.PhongShader->SetMat4("u_Model", transform.Model);
@@ -135,6 +137,7 @@ namespace Ra
 
     void Renderer::Submit(Mesh& mesh, const Transform& transform, RendererAPI::DrawMode mode /*= RendererAPI::DrawMode::Triangles*/)
     {
+        PROFILER_SCOPE("Renderer::Submit( Mesh )  -  " + mesh.GetPath());
         auto& subMeshes = mesh.GetSubMeshes();
         for (auto& it : subMeshes)
         {

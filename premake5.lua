@@ -1,7 +1,7 @@
 project "RenderAbstraction"
 	kind "StaticLib"
 	language "C++"
-    staticruntime "Off"
+    staticruntime "On"
 
 	targetdir ("%{wks.location}/bin/" .. outputdir .. "/%{prj.name}")
 	objdir ("%{wks.location}/bin-int/" .. outputdir .. "/%{prj.name}")
@@ -27,6 +27,7 @@ project "RenderAbstraction"
 		"%{IncludeDir.GLFW}",
 		"%{IncludeDir.glm}",
 		"%{prj.location}/thirdparty/assimp/include/",
+		"%{prj.location}/thirdparty/Profiler/include/",
 	}
 
 	defines
@@ -46,7 +47,7 @@ project "RenderAbstraction"
 		systemversion "latest"
         cppdialect "C++17"
         staticruntime "On"
-		defines { "RA_WINDOWS" }
+		defines { "RA_WINDOWS", "PROFILER_ENABLE"  }
 
 
 	filter "configurations:Debug"

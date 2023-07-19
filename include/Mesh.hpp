@@ -16,6 +16,7 @@ namespace Ra
         void LoadMesh(const std::string& path);
 
         const std::vector<SubMesh>& GetSubMeshes() const;
+        std::string GetPath() const;
     private:
         void ProcessNode_(aiNode* node, const aiScene* scene);
         SubMesh ProcessSubMesh_(aiMesh* subMesh, const aiScene* scene);

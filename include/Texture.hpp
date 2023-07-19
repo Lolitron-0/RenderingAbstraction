@@ -3,9 +3,9 @@
 namespace Ra
 {
     /// Enum for texture formats abstraction
-    enum class TextureFormat : std::uint8_t
+    enum class TextureFormat
     {
-        None,
+        None = -1,
         R32,
         R16,
         RG,

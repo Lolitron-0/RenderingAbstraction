@@ -5,6 +5,7 @@
 #include "Texture.hpp"
 #include "Shader.hpp"
 #include "Material.hpp"
+#include <Profiler.hpp>
 
 namespace Ra
 {
@@ -27,6 +28,7 @@ namespace Ra
 
     void SubMesh::SetupSubmesh_()
     {
+        PROFILER_SCOPE("SubMesh::SetupSubmesh_()");
         BufferLayout l = {
             {BufferDataType::Float3, "Position"},
             {BufferDataType::Float3, "Normal"},

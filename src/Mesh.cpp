@@ -4,6 +4,7 @@
 #include <assimp/Importer.hpp>
 #include <assimp/scene.h>
 #include <assimp/postprocess.h>
+#include <Profiler.hpp>
 
 namespace Ra
 {
@@ -16,10 +17,16 @@ namespace Ra
 
     void Mesh::LoadMesh(const std::string& path)
     {
+        PROFILER_SCOPE("Mesh::LoadMesh()");
         m_Path = path;
         Assimp::Importer importer;
-        const aiScene* scene = importer.ReadFile(m_Path.string(), aiProcess_Triangulate );
-        RA_ASSERT(scene && !scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE && scene->mRootNode, "Scene not loaded!");
+        const aiScene* scene;
+        {
+            PROFILER_SCOPE("Mesh: read file");
+            scene = importer.ReadFile(m_Path.string(), aiProcess_Triangulate | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices |
+                aiProcess_OptimizeMeshes | aiProcess_ImproveCacheLocality | aiProcess_GenUVCoords | aiProcess_CalcTangentSpace);
+        }
+        RA_ASSERT(scene && !(scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) && scene->mRootNode, "Scene not loaded!" + importer.GetErrorString());
         ProcessNode_(scene->mRootNode, scene);
         RA_LOG("Loaded " + path + " mesh!");
     }
@@ -27,6 +34,11 @@ namespace Ra
     const std::vector<SubMesh>& Mesh::GetSubMeshes() const
     {
         return m_SubMeshes;
+    }
+
+    std::string Mesh::GetPath() const
+    {
+        return m_Path.string();
     }
 
     void Mesh::ProcessNode_(aiNode* node, const aiScene* scene)
