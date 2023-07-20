@@ -55,7 +55,7 @@ namespace Ra
         Bind();
         int tWidth, tHeight, tNumChannels;
         std::uint8_t* tData = stbi_load(path.c_str(), &tWidth, &tHeight, &tNumChannels, 0);
-        m_Source = path;
+        m_Path = path;
 
         RA_ASSERT(tData, stbi_failure_reason());
         LoadFromData_(tData, tWidth, tHeight, tNumChannels, format);

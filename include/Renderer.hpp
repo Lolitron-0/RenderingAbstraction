@@ -3,6 +3,8 @@
 #include "Camera.hpp"
 #include "Material.hpp"
 #include "ShaderUserData.hpp"
+#include "Stopwatch.hpp"
+#include "Lights.hpp"
 #include <glm/glm.hpp>
 
 namespace Ra
@@ -15,10 +17,7 @@ namespace Ra
 
     struct Renderer3DData
     {
-        Ref<VertexBuffer>   CubeVertexBuffer;
-        Ref<IndexBuffer>    CubeIndexBuffer;
-        Ref<VertexArray>    CubeVertexArray;
-
+        Ref<Mesh> VectorMesh;
         Ref<Shader> PhongShader;
 
         Material DebugMaterial;
@@ -28,6 +27,8 @@ namespace Ra
     {
         int DrawCalls{ 0 };
         std::size_t Indices{ 0 };
+        Stopwatch ScenesPerSecondSW{};
+        float ScenesPerSecond{ -1.f };
     };
 
     /// High level rendering commands (Scene level)
@@ -85,15 +86,17 @@ namespace Ra
         */
         static void Submit(const Ref<VertexArray>& vertexArray, const Transform& transform, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
         
-        static void Submit(Mesh& mesh, const Transform& transform, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
+        static void Submit(const Ref<Mesh>& mesh, const Transform& transform, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
 
-        //static void DrawCube(const Transform& transform, const Material& material, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
-        static void SubmitPointLight(const PointLight& light, const glm::vec3& position);
+        static void DrawVector(const glm::vec3& position, const glm::vec3& direction);
+
+        static void SubmitLight(const PointLight& light, const glm::vec3& position);
+
+        static void SubmitLight(const DirLight& light);
 
         static RendererStats GetStats();
 
         static Renderer3DData Storage;
-        static std::vector<Ref<Texture>> LoadedTextures;
 
     private:
         static RendererStats s_Stats;
@@ -104,7 +107,8 @@ namespace Ra
         {
             glm::mat4 ViewProjectionMatrix;
             glm::vec3 CameraPosition;
-            int SubmittedLights{ 0 };
+            std::uint16_t SubmittedPointLights{ 0 };
+            std::uint16_t SubmittedDirLights{ 0 };
         };
 
         static Scope<SceneData> s_SceneData;

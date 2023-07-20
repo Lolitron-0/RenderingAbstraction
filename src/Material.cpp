@@ -1,12 +1,14 @@
 #include "rapch.h"
 #include "Material.hpp"
 #include "Shader.hpp"
+#include <Profiler.hpp>
 
 namespace Ra
 {
 
     void Material::LoadTo(const Ref<Shader>& shader) const
     {
+        PROFILER_SCOPE("Material::LoadTo()");
         shader->Bind();
         std::uint32_t diffuseNum = 1;
         std::uint32_t specularNum = 1;
@@ -32,6 +34,7 @@ namespace Ra
         shader->SetVec3("u_Material.BaseColor", BaseColor);
         shader->SetFloat("u_Material.Shininess", Shininess);
         shader->SetFloat("u_Material.Opacity", Opacity);
+        shader->SetBool("u_Material.SkipLight", SkipLight);
     }
 
 }

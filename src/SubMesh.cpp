@@ -26,6 +26,11 @@ namespace Ra
         return m_Material;
     }
 
+    Ra::Material& SubMesh::GetMaterial()
+    {
+        return m_Material;
+    }
+
     void SubMesh::SetupSubmesh_()
     {
         PROFILER_SCOPE("SubMesh::SetupSubmesh_()");

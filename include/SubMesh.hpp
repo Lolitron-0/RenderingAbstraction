@@ -22,6 +22,7 @@ namespace Ra
         Ref<VertexArray> GetVertexArray() const;
 
         const Material& GetMaterial() const;
+        Material& GetMaterial();
 
     private:
         void SetupSubmesh_();

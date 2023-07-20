@@ -1,28 +1,15 @@
 #pragma once
 #include "SubMesh.hpp"
-#include "Texture.hpp"
-
-    struct aiNode;
-    struct aiScene;
-    struct aiMesh;
-    struct aiMaterial;
 
 namespace Ra
 {
     class Mesh
     {
     public:
-        Mesh(const std::string& path);
-        void LoadMesh(const std::string& path);
+        virtual const std::vector<SubMesh>& GetSubMeshes() const = 0;
+        virtual std::string GetPath() const = 0;
+        virtual void ForEashSubmesh(const std::function<void(SubMesh&)>& func) = 0;
 
-        const std::vector<SubMesh>& GetSubMeshes() const;
-        std::string GetPath() const;
-    private:
-        void ProcessNode_(aiNode* node, const aiScene* scene);
-        SubMesh ProcessSubMesh_(aiMesh* subMesh, const aiScene* scene);
-        std::vector<Ref<Texture>> LoadMaterialTextures_(aiMaterial* material, TextureType type);
-
-        std::vector<SubMesh> m_SubMeshes;
-        std::filesystem::path m_Path;
+        static Ref<Mesh> Create(const std::string& path);
     };
 }

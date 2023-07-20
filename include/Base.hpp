@@ -15,6 +15,7 @@ namespace Ra
     inline void SetLogCallback(const CallbackFn& callback) { logCallback = callback; }
 
     std::string GetShadersDir();
+    std::string GetMeshesDir();
 
     template<class T>
     using Scope = std::unique_ptr<T>;
@@ -114,3 +115,17 @@ struct TypeAt<N, TypeList<Args...>>
     static_assert(N > Length<TypeList<Args...>>::value);
     using type = typename TypeAt<N - 1, typename TypeList<Args...>::Tail>::type;
 };
+
+template<class T, class TL>
+struct Contains : std::false_type {};
+
+template<class... Args>
+struct Contains<NullType, Args...> : std::false_type {};
+
+template<class T, class... Args>
+struct Contains<T, TypeList<Args...>>
+    : std::integral_constant<bool,
+    std::is_same<T, typename TypeList<Args...>::Head>::value ||
+    Contains<T, typename TypeList<Args...>::Tail>::value
+    >
+{};

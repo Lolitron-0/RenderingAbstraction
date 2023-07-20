@@ -6,6 +6,8 @@
 #include "Shader.hpp"
 #include "Mesh.hpp"
 #include <Profiler.hpp>
+#include <glm/gtx/quaternion.hpp>
+#include <glm/gtc/matrix_transform.hpp>
 
 namespace Ra
 {
@@ -17,8 +19,6 @@ namespace Ra
 
     Ra::Renderer3DData Renderer::Storage{};
 
-    std::vector<Ra::Ref<Ra::Texture>> Renderer::LoadedTextures{};
-
     void Renderer::Init()
     {
         PROFILER_SCOPE("Renderer::Init()");
@@ -29,72 +29,16 @@ namespace Ra
         if (s_RendererAPI != RendererAPI::API::None)
             RenderCommand::Init();
 
-        float cubeData[] =
-        {
-            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,    0.0f, 0.0f, 1.0f,
-             0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 0.0f,    1.0f, 1.0f, 1.0f,
-             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,    1.0f, 1.0f, 1.0f,
-             0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  1.0f, 1.0f,    1.0f, 1.0f, 1.0f,
-            -0.5f,  0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 1.0f,    1.0f, 1.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f,  0.0f,  0.0f, -1.0f,  0.0f, 0.0f,    0.0f, 0.0f, 1.0f,
-
-            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,    1.0f, 1.0f, 1.0f,
-             0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 0.0f,    1.0f, 1.0f, 1.0f,
-             0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,    1.0f, 0.0f, 0.0f,
-             0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   1.0f, 1.0f,    1.0f, 0.0f, 0.0f,
-            -0.5f,  0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 1.0f,    1.0f, 1.0f, 1.0f,
-            -0.5f, -0.5f,  0.5f,  0.0f,  0.0f, 1.0f,   0.0f, 0.0f,    1.0f, 1.0f, 1.0f,
-
-            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,    1.0f, 1.0f, 1.0f,
-            -0.5f,  0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 1.0f,    1.0f, 1.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,    0.0f, 0.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 1.0f,    0.0f, 0.0f, 1.0f,
-            -0.5f, -0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  0.0f, 0.0f,    1.0f, 1.0f, 1.0f,
-            -0.5f,  0.5f,  0.5f, -1.0f,  0.0f,  0.0f,  1.0f, 0.0f,    1.0f, 1.0f, 1.0f,
-
-             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,    1.0f, 0.0f, 0.0f,
-             0.5f,  0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 1.0f,    1.0f, 1.0f, 1.0f,
-             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,    1.0f, 1.0f, 1.0f,
-             0.5f, -0.5f, -0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 1.0f,    1.0f, 1.0f, 1.0f,
-             0.5f, -0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  0.0f, 0.0f,    1.0f, 1.0f, 1.0f,
-             0.5f,  0.5f,  0.5f,  1.0f,  0.0f,  0.0f,  1.0f, 0.0f,    1.0f, 0.0f, 0.0f,
-
-            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,    0.0f, 0.0f, 1.0f,
-             0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 1.0f,    1.0f, 1.0f, 1.0f,
-             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,    1.0f, 1.0f, 1.0f,
-             0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  1.0f, 0.0f,    1.0f, 1.0f, 1.0f,
-            -0.5f, -0.5f,  0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 0.0f,    1.0f, 1.0f, 1.0f,
-            -0.5f, -0.5f, -0.5f,  0.0f, -1.0f,  0.0f,  0.0f, 1.0f,    0.0f, 0.0f, 1.0f,
-
-            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,    1.0f, 1.0f, 1.0f,
-             0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 1.0f,    1.0f, 1.0f, 1.0f,
-             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,    1.0f, 0.0f, 0.0f,
-             0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  1.0f, 0.0f,    1.0f, 0.0f, 0.0f,
-            -0.5f,  0.5f,  0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 0.0f,    1.0f, 1.0f, 1.0f,
-            -0.5f,  0.5f, -0.5f,  0.0f,  1.0f,  0.0f,  0.0f, 1.0f,    1.0f, 1.0f, 1.0f
-        };
-        
-        Storage.CubeVertexBuffer = VertexBuffer::Create(cubeData, sizeof(cubeData));
-        Storage.CubeVertexBuffer->SetLayout({
-            {BufferDataType::Float3, "position"},
-            {BufferDataType::Float3, "normals"},
-            {BufferDataType::Float2, "texCoords"},
-            {BufferDataType::Float3, "color"},
-            });
-
-        std::uint32_t* cubeIndices = new std::uint32_t[36];
-        for (int i = 0; i < 36; i++) cubeIndices[i] = i;
-        Storage.CubeIndexBuffer = IndexBuffer::Create(cubeIndices, 36);
-        delete[] cubeIndices;
-       
-        Storage.CubeVertexArray = VertexArray::Create();
-        Storage.CubeVertexArray->AddVertexBuffer(Storage.CubeVertexBuffer);
-        Storage.CubeVertexArray->SetIndexBuffer(Storage.CubeIndexBuffer);
-
         Storage.PhongShader = Shader::Create(GetShadersDir()+"phong.vert", GetShadersDir()+"phong.frag");
         Storage.PhongShader->Bind();
         Storage.PhongShader->SetInt("u_Material.DiffuseMap", 0);
         Storage.PhongShader->SetInt("u_Material.SpecularMap", 1);
+
+        Storage.VectorMesh = Mesh::Create(GetMeshesDir() + "Vector.fbx");
+        Storage.VectorMesh->ForEashSubmesh([](auto& subMesh)
+            {
+                subMesh.GetMaterial().SkipLight = true;
+            });
     }
 
     void Renderer::Shutdown()
@@ -111,12 +55,14 @@ namespace Ra
     {
         s_SceneData->ViewProjectionMatrix = viewProjection;
         s_SceneData->CameraPosition = cameraPosition;
-        s_SceneData->SubmittedLights = 0;
+        s_SceneData->SubmittedPointLights = 0;
+        s_SceneData->SubmittedDirLights = 0;
         s_Stats = {};
     }
 
     void Renderer::EndScene()
     {
+        s_Stats.ScenesPerSecond = 1000000.0f / s_Stats.ScenesPerSecondSW.Elapsed();
     }
 
     void Renderer::Submit(const Ref<VertexArray>& vertexArray, const Transform& transform, RendererAPI::DrawMode mode /*= RendererAPI::DrawMode::Triangles*/)
@@ -126,8 +72,10 @@ namespace Ra
         Storage.PhongShader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
         Storage.PhongShader->SetMat4("u_Model", transform.Model);
         Storage.PhongShader->SetMat3("u_NormalModel", transform.Normal);
-        RA_ASSERT(s_SceneData->SubmittedLights <= 128, "Too many point lights!");
-        Storage.PhongShader->SetInt("u_PointLightsCount", s_SceneData->SubmittedLights);
+        RA_ASSERT(s_SceneData->SubmittedPointLights <= 128, "Too many point lights!");
+        Storage.PhongShader->SetInt("u_PointLightsCount", s_SceneData->SubmittedPointLights);
+        RA_ASSERT(s_SceneData->SubmittedDirLights <= 1, "Too many dir lights!");
+        Storage.PhongShader->SetInt("u_DirLightsCount", s_SceneData->SubmittedDirLights);
         Storage.PhongShader->SetVec3("u_CameraPosition", s_SceneData->CameraPosition);
 
         RenderCommand::DrawIndexed(vertexArray, mode);
@@ -135,15 +83,27 @@ namespace Ra
         s_Stats.Indices += vertexArray->GetIndexBufer()->GetCount();
     }
 
-    void Renderer::Submit(Mesh& mesh, const Transform& transform, RendererAPI::DrawMode mode /*= RendererAPI::DrawMode::Triangles*/)
+    void Renderer::Submit(const Ref<Mesh>& mesh, const Transform& transform, RendererAPI::DrawMode mode /*= RendererAPI::DrawMode::Triangles*/)
     {
-        PROFILER_SCOPE("Renderer::Submit( Mesh )  -  " + mesh.GetPath());
-        auto& subMeshes = mesh.GetSubMeshes();
+        PROFILER_SCOPE("Renderer::Submit( Mesh )  -  " + mesh->GetPath());
+        auto& subMeshes = mesh->GetSubMeshes();
         for (auto& it : subMeshes)
         {
+            PROFILER_SCOPE("Renderer: submesh iteration")
             it.GetMaterial().LoadTo(Storage.PhongShader);
             Submit(it.GetVertexArray(), transform, mode);
         }
+    }
+
+    void Renderer::DrawVector(const glm::vec3& position, const glm::vec3& direction)
+    {
+        glm::mat4 trans;
+        glm::mat4 translation{glm::translate(glm::mat4{1.f}, position)};
+        auto q = glm::quatLookAt(glm::normalize(direction), { 0,1,0 });
+        trans = translation * glm::toMat4(q);
+
+        Transform transform{trans};
+        Submit(Storage.VectorMesh, transform);
     }
 
     //void Renderer::DrawCube(const Transform& transform, const Material& material, RendererAPI::DrawMode mode)
@@ -151,13 +111,23 @@ namespace Ra
     //    Submit(Storage.CubeVertexArray, transform, material, mode);
     //}
 
-    void Renderer::SubmitPointLight(const PointLight& light, const glm::vec3& position)
+    void Renderer::SubmitLight(const PointLight& light, const glm::vec3& position)
     {
-        std::string uniformLightToken = "u_PointLights[" + std::to_string(s_SceneData->SubmittedLights++) + "].";
+        std::string uniformLightToken = "u_PointLights[" + std::to_string(s_SceneData->SubmittedPointLights++) + "].";
         Storage.PhongShader->Bind();
         Storage.PhongShader->SetVec3(uniformLightToken + "Position", position);
         Storage.PhongShader->SetVec3(uniformLightToken + "Color", light.Color);
         Storage.PhongShader->SetFloat(uniformLightToken + "Intensity", light.Intensity);
+    }
+
+    void Renderer::SubmitLight(const DirLight& light)
+    {
+        std::string uniformLightToken = "u_DirLight.";
+        Storage.PhongShader->Bind();
+        Storage.PhongShader->SetVec3(uniformLightToken + "Direction", light.Direction);
+        Storage.PhongShader->SetVec3(uniformLightToken + "Color", light.Color);
+        Storage.PhongShader->SetFloat(uniformLightToken + "Intensity", light.Intensity);
+        s_SceneData->SubmittedDirLights++;
     }
 
     Ra::RendererStats Renderer::GetStats()

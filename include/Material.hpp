@@ -4,12 +4,6 @@
 
 namespace Ra
 {
-    struct PointLight
-    {
-        glm::vec3 Color{ 1.f };
-        float Intensity{ 1.f }; // @todo split
-    };
-
     class Shader;
 
     class Material
@@ -19,6 +13,7 @@ namespace Ra
 
         float Shininess{ 32.f };
         float Opacity{ 1.f };
+        bool SkipLight{ false };
 
         glm::vec3 BaseColor{ .36f };
         std::string Name{ "Default material" };

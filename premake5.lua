@@ -39,22 +39,23 @@ project "RenderAbstraction"
 	{
 		"Glad",
 		"GLFW",
-		"%{prj.location}/thirdparty/assimp/lib/Debug/assimp-vc143-mtd.lib",
-		"%{prj.location}/thirdparty/assimp/contrib/zlib/Debug/zlibstaticd.lib",
+		"%{prj.location}/thirdparty/assimp/contrib/zlib/Release/zlibstatic.lib",
 	}
 
 	filter "system:windows"
 		systemversion "latest"
         cppdialect "C++17"
         staticruntime "On"
-		defines { "RA_WINDOWS", "PROFILER_ENABLE"  }
+		defines { "RA_WINDOWS" }
 
 
 	filter "configurations:Debug"
 		runtime "Debug"
 		symbols "on"
-		defines { "RA_DEBUG" }
+		links{ "%{prj.location}/thirdparty/assimp/lib/Debug/assimp-vc143-mtd.lib" }
+		defines { "RA_DEBUG", "PROFILER_ENABLE" }
 
 	filter "configurations:Release"
 		runtime "Release"
+		links{ "%{prj.location}/thirdparty/assimp/lib/Release/assimp-vc143-mt.lib" }
 		optimize "on"

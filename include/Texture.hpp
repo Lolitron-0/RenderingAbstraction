@@ -74,8 +74,8 @@ namespace Ra
         TextureWrap GetWrap() const { return m_Wrap; }
         TextureFilter GetMinFilter() const { return m_MinFilter; }
         TextureFilter GetMagFilter() const { return m_MagFilter; }
-        TextureType GetType() const { return m_Type; };
-        std::string GetSource() const { return m_Source; }
+        TextureType GetType() const { return m_Type; }
+        std::string GetPath() const { return m_Path; }
 
         virtual RendererId GetNativeTerxtureHandle() const = 0;
 
@@ -97,7 +97,7 @@ namespace Ra
         TextureFormat m_Format{ TextureFormat::None };
         TextureWrap m_Wrap{ TextureWrap::Repeat };
         TextureFilter m_MinFilter{ TextureFilter::Linear }, m_MagFilter{ TextureFilter::Linear };
-        std::string m_Source{ "Internal resource" };
+        std::string m_Path{ "Internal resource" };
         TextureType m_Type{ TextureType::Diffuse };
     };
 

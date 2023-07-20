@@ -2,6 +2,7 @@
 #include "Texture.hpp"
 #include "Renderer.hpp"
 #include "OpenGL/OpenGLTexture.hpp"
+#include "ResourceManager.hpp"
 #include <Profiler.hpp>
 
 namespace Ra
@@ -17,18 +18,12 @@ namespace Ra
         default: ret = nullptr; break;
         }
         
-        decltype(Renderer::LoadedTextures)::iterator sameIt;
-        if ((sameIt = std::find_if(
-            Renderer::LoadedTextures.begin(),
-            Renderer::LoadedTextures.end(),
-            [&path](const Ref<Texture>& tex) { return tex->GetSource() == path; }))
-            != Renderer::LoadedTextures.end())
-            return *sameIt;
+        if (ResourceManager::TryFindAlreadyLoaded<Texture>(ret, path))
+            return ret;
 
         {
             PROFILER_SCOPE("Texture: creating from file " + path)
             ret->LoadFromFile_(path, format, type);
-            Renderer::LoadedTextures.push_back(ret);
         }
         return ret;
     }

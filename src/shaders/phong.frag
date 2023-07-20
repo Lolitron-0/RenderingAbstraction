@@ -1,4 +1,8 @@
 #version 330 core
+#define MAX_POINT_LIGHTS 128
+#define LIGHT_AMBIENT 0.2
+#define LIGHT_DIFFUSE 0.5
+#define LIGHT_SPECULAR 1.0
 
 vec4 validateTexture(sampler2D tex, vec2 texCoord)
 {
@@ -31,11 +35,17 @@ struct Material
 	vec3 BaseColor;
 	float Opacity;
 	float Shininess;
+	bool SkipLight;
 };
 
-#define MAX_POINT_LIGHTS 128
 struct PointLight {
 	vec3 Position;
+	vec3 Color;
+	float Intensity;
+};
+
+struct DirLight {
+	vec3 Direction;
 	vec3 Color;
 	float Intensity;
 };
@@ -51,30 +61,73 @@ uniform vec3 u_CameraPosition;
 uniform Material u_Material;
 uniform PointLight u_PointLights[MAX_POINT_LIGHTS];
 uniform int u_PointLightsCount;
+uniform DirLight u_DirLight;
+uniform int u_DirLightsCount;
 
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec3 diffuseBase);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 diffuseBase);
 
 void main()
 {
-	vec4 result = vec4(0,0,0,0);
+	vec3 result = vec3(0);
 	vec4 base;
 	if (textureSize(u_Material.DiffuseMap1, 0) != ivec2(1,1))
 	{
 		base = texture(u_Material.DiffuseMap1, TexCoord);
 	}
 	else
-		base = vec4(u_Material.BaseColor, 1);
+		base = vec4(u_Material.BaseColor, 1); 
 
-	vec3 norm = normalize(Normal);
-	vec3 viewDir = normalize(Position - u_CameraPosition);
-	for (int i = 0; i < u_PointLightsCount; i++)
+	if (!u_Material.SkipLight)
 	{
-		result += vec4(CalcPointLight(u_PointLights[i], norm, Position, viewDir, vec3(base)), 1.);
+		vec3 norm = normalize(Normal);
+		vec3 viewDir = normalize(Position - u_CameraPosition);
+
+		// Directional lights
+		for (int i = 0; i < u_DirLightsCount; i++)
+		{
+			result += CalcDirLight(u_DirLight, norm, viewDir, vec3(base));
+		}
+
+		// Point lights
+		for (int i = 0; i < u_PointLightsCount; i++)
+		{
+			result += CalcPointLight(u_PointLights[i], norm, Position, viewDir, vec3(base));
+		}
+	}
+	else
+	{
+		result = vec3(base);
 	}
 	
-	result.a = u_Material.Opacity;
-	fragmentColor = result;
+	fragmentColor = vec4(result,1);
+	fragmentColor.a = u_Material.Opacity;
 	entityId = 234;
+}
+
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec3 diffuseBase) {	
+	vec3 lightDir = normalize(light.Direction);
+	vec3 norm = normalize(normal);
+
+	// diffuse
+	float diff = max(dot(norm, -lightDir), 0.0); // negate to match normal dir
+
+	//specular
+	vec3 reflectDir = reflect(lightDir, norm); //actual reflect
+	float spec = pow(max(dot(reflectDir, -viewDir), 0.0), u_Material.Shininess);
+
+	vec3 ambient = LIGHT_AMBIENT * light.Color * diffuseBase;
+	vec3 diffuse = LIGHT_DIFFUSE *  light.Color * light.Intensity * (diff * diffuseBase);
+
+	vec3 specBase;
+	if (textureValid(u_Material.SpecularMap1))
+		specBase = vec3(texture(u_Material.SpecularMap1, TexCoord));
+	else
+		specBase = diffuseBase;
+
+	vec3 specular = light.Intensity * LIGHT_SPECULAR * (spec * specBase);
+
+	return (ambient + diffuse + specular);
 }
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 diffuseBase) {
@@ -99,14 +152,14 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
 							   constant);
 
 
-	vec3 ambient =  attenuation * light.Color * .2 * diffuseBase;
-	vec3 diffuse =  light.Intensity *attenuation * light.Color * .5 * (diff * diffuseBase);
+	vec3 ambient =  LIGHT_AMBIENT * light.Color * attenuation * diffuseBase;
+	vec3 diffuse =  LIGHT_DIFFUSE * light.Color * light.Intensity * attenuation * (diff * diffuseBase);
 	vec3 specBase;
 	if (textureValid(u_Material.SpecularMap1))
 		specBase = vec3(texture(u_Material.SpecularMap1, TexCoord));
 	else
 		specBase = diffuseBase;
-	vec3 specular = light.Intensity * attenuation * vec3(1,1,1) * (spec * specBase);
+	vec3 specular = light.Intensity * attenuation * LIGHT_SPECULAR *  vec3(1,1,1) * (spec * specBase);
 
 	return (ambient + diffuse + specular);
 }
