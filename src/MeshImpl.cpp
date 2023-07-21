@@ -21,6 +21,8 @@ namespace Ra
                 aiProcess_OptimizeMeshes | aiProcess_ImproveCacheLocality | aiProcess_GenUVCoords | aiProcess_CalcTangentSpace*/);
         }
         RA_ASSERT(scene && !(scene->mFlags & AI_SCENE_FLAGS_INCOMPLETE) && scene->mRootNode, "Scene not loaded!" + importer.GetErrorString());
+        RA_LOG("Materials: " + std::to_string(scene->mNumMaterials));
+        RA_LOG("SubMeshes: " + std::to_string(scene->mNumMeshes));
         ProcessNode_(scene->mRootNode, scene);
         RA_LOG("Loaded " + path + " mesh!");
     }
@@ -119,12 +121,6 @@ namespace Ra
         case Ra::TextureType::Normal:
             aiType = aiTextureType_NORMALS;
             break;
-        }
-
-        for (int i{ aiTextureType_NONE }; i <= AI_TEXTURE_TYPE_MAX; i++)
-        {
-            int n = material->GetTextureCount((aiTextureType)i);
-            if (n) RA_LOG(std::to_string(i) + " : " + std::to_string(n));
         }
 
 
