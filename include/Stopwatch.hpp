@@ -22,7 +22,7 @@ namespace Ra
 
         template<class T = std::chrono::microseconds>
         typename std::enable_if<Contains<T, ChronoTypes>::value,std::uint64_t>
-            ::type Elapsed()
+            ::type Elapsed() const
         {
             auto endTime{ std::chrono::steady_clock::now() };
             auto highResStart{ std::chrono::duration<double, std::milli>{ m_Start.time_since_epoch() } };
