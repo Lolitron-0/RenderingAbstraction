@@ -34,6 +34,9 @@ struct Material
 	sampler2D NormalMap4;
 	vec3 BaseColor;
 	float Opacity;
+	float Reflection;
+	float Refraction;
+	float RefractiveIndex;
 	float Shininess;
 	bool SkipLight;
 };
@@ -63,9 +66,11 @@ uniform PointLight u_PointLights[MAX_POINT_LIGHTS];
 uniform int u_PointLightsCount;
 uniform DirLight u_DirLight;
 uniform int u_DirLightsCount;
+uniform samplerCube u_Environment;
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec3 diffuseBase);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 diffuseBase);
+vec3 CalcEnvironmentMap(samplerCube environment, vec3 normal, vec3 viewDir);
 
 void main()
 {
@@ -78,10 +83,13 @@ void main()
 	else
 		base = vec4(u_Material.BaseColor, 1); 
 
+	if (base.a <= 0.05)
+		discard;
+
+	vec3 norm = normalize(Normal);
+	vec3 viewDir = normalize(Position - u_CameraPosition);
 	if (!u_Material.SkipLight)
 	{
-		vec3 norm = normalize(Normal);
-		vec3 viewDir = normalize(Position - u_CameraPosition);
 
 		// Directional lights
 		for (int i = 0; i < u_DirLightsCount; i++)
@@ -100,20 +108,33 @@ void main()
 		result = vec3(base);
 	}
 	
+	result += CalcEnvironmentMap(u_Environment, norm, viewDir);
 	fragmentColor = vec4(result,1);
 	fragmentColor.a = u_Material.Opacity;
 	entityId = 234;
 }
 
+
+vec3 CalcEnvironmentMap(samplerCube environment, vec3 normal, vec3 viewDir)
+{
+	vec3 reflected = reflect(viewDir, normal);
+	vec3 reflectionRes = u_Material.Reflection * texture(environment, reflected).rgb;
+
+	float ratio = 1.0/u_Material.RefractiveIndex;
+	vec3 refracted = refract(viewDir, normal, ratio);
+	vec3 refractionRes = u_Material.Refraction * texture(environment, refracted).rgb;
+	return reflectionRes + refractionRes;
+}
+
+
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec3 diffuseBase) {	
 	vec3 lightDir = normalize(light.Direction);
-	vec3 norm = normalize(normal);
 
 	// diffuse
-	float diff = max(dot(norm, -lightDir), 0.0); // negate to match normal dir
+	float diff = max(dot(normal, -lightDir), 0.0); // negate to match normal dir
 
 	//specular
-	vec3 reflectDir = reflect(lightDir, norm); //actual reflect
+	vec3 reflectDir = reflect(lightDir, normal); //actual reflect
 	float spec = pow(max(dot(reflectDir, -viewDir), 0.0), u_Material.Shininess);
 
 	vec3 ambient = LIGHT_AMBIENT * light.Color * diffuseBase;
@@ -132,13 +153,12 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec3 diffuseBase) {
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 diffuseBase) {
 	vec3 lightDir = normalize(fragPos - light.Position);
-	vec3 norm = normalize(normal);
 
 	// diffuse
-	float diff = max(dot(norm, -lightDir), 0.0); // negate to match normal dir
+	float diff = max(dot(normal, -lightDir), 0.0); // negate to match normal dir
 
 	//specular
-	vec3 reflectDir = reflect(lightDir, norm); //actual reflect
+	vec3 reflectDir = reflect(lightDir, normal); //actual reflect
 	float spec = pow(max(dot(reflectDir, -viewDir), 0.0), u_Material.Shininess);
 
 	float constant = 1.;

@@ -103,14 +103,23 @@ namespace Ra
         Unbind();
     }
 
-    std::vector<Ra::Ref<Ra::VertexBuffer>> OpenGLVertexArray::GetVertexBuffers() const
+    std::vector<Ref<VertexBuffer>> OpenGLVertexArray::GetVertexBuffers() const
     {
         return m_VertexBuffers;
     }
 
-    Ra::Ref<Ra::IndexBuffer> OpenGLVertexArray::GetIndexBufer() const
+    Ref<IndexBuffer> OpenGLVertexArray::GetIndexBufer() const
     {
         return m_IndexBuffer;
+    }
+
+    void OpenGLVertexArray::SetDefaultIndexBuffer(std::size_t vertexCount)
+    {
+        std::vector<std::uint32_t> indices;
+        indices.resize(vertexCount);
+        for (std::uint32_t i{ 0 }; i < vertexCount; i++) indices[i] = i;
+        Ref<IndexBuffer> indexBuffer = IndexBuffer::Create(indices.data(), vertexCount);
+        SetIndexBuffer(indexBuffer);
     }
 
 }

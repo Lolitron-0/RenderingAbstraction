@@ -13,6 +13,9 @@ namespace Ra
 
         float Shininess{ 32.f };
         float Opacity{ 1.f };
+        float Reflection{ 0.f };
+        float Refraction{ 0.f };
+        float RefractiveIndex{ 1.52f };
         bool SkipLight{ false };
 
         glm::vec3 BaseColor{ .36f };

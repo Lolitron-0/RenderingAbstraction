@@ -1,6 +1,7 @@
 #include "rapch.h"
 #include "Renderer.hpp"
-#include "RenderCommand.hpp"
+//#include "RenderCommand.hpp"
+#include "RendererApi.hpp"
 #include "Buffer.hpp"
 #include "VertexArray.hpp"
 #include "Shader.hpp"
@@ -26,13 +27,11 @@ namespace Ra
         Texture::NullTexture = Texture::Create(nullTexData, 1, 1, 4);
 
 
-        if (s_RendererAPI != RendererAPI::API::None)
-            RenderCommand::Init();
+        //if (s_RendererAPI != RendererAPI::API::None)
+        //    RenderCommand::Init();
 
         Storage.PhongShader = Shader::Create(GetShadersDir()+"phong.vert", GetShadersDir()+"phong.frag");
-        Storage.PhongShader->Bind();
-        Storage.PhongShader->SetInt("u_Material.DiffuseMap", 0);
-        Storage.PhongShader->SetInt("u_Material.SpecularMap", 1);
+        Storage.SkyboxShader = Shader::Create(GetShadersDir()+"skybox.vert", GetShadersDir()+"skybox.frag");
 
         Storage.VectorMesh = Mesh::Create(GetMeshesDir() + "Vector.fbx");
         Storage.VectorMesh->ForEashSubmesh([](auto& subMesh)
@@ -45,24 +44,35 @@ namespace Ra
     {
     }
 
-    void Renderer::BeginScene(const Camera& camera)
+    void Renderer::DrawSkybox(const Skybox& skybox)
     {
-        s_SceneData->ViewProjectionMatrix = camera.GetViewProjection();
-        s_Stats = {};
+        RendererAPI::GetInstance().SetDepthFunc(RendererAPI::DepthFunc::Lequal);
+
+        Storage.SkyboxShader->Bind();
+        Storage.SkyboxShader->SetMat4("u_ViewProjection", s_SceneData->ProjMatrix * glm::mat4(glm::mat3(s_SceneData->ViewMatrix)));
+        skybox.Bind();
+
+        skybox.DrawBoundsCube();
+
+        RendererAPI::GetInstance().SetDepthFunc(RendererAPI::DepthFunc::Less);
     }
 
-    void Renderer::BeginScene(const glm::mat4& viewProjection, const glm::vec3& cameraPosition)
+    void Renderer::BeginScene(const glm::mat4& viewMatrix, const glm::mat4& projMatrix, const glm::vec3& cameraPosition, const Skybox& skybox)
     {
-        s_SceneData->ViewProjectionMatrix = viewProjection;
+        s_SceneData->ViewProjectionMatrix = projMatrix * viewMatrix;
+        s_SceneData->ViewMatrix = viewMatrix;
+        s_SceneData->ProjMatrix = projMatrix;
         s_SceneData->CameraPosition = cameraPosition;
         s_SceneData->SubmittedPointLights = 0;
         s_SceneData->SubmittedDirLights = 0;
+        s_SceneData->SkyboxObject = skybox;
         s_Stats = {};
     }
 
     void Renderer::EndScene()
     {
         s_Stats.ScenesPerSecond = 1000000.0f / s_Stats.ScenesPerSecondSW.Elapsed();
+        DrawSkybox(s_SceneData->SkyboxObject);
     }
 
     void Renderer::Submit(const Ref<VertexArray>& vertexArray, const Transform& transform, RendererAPI::DrawMode mode /*= RendererAPI::DrawMode::Triangles*/)
@@ -77,8 +87,10 @@ namespace Ra
         RA_ASSERT(s_SceneData->SubmittedDirLights <= 1, "Too many dir lights!");
         Storage.PhongShader->SetInt("u_DirLightsCount", s_SceneData->SubmittedDirLights);
         Storage.PhongShader->SetVec3("u_CameraPosition", s_SceneData->CameraPosition);
+        s_SceneData->SkyboxObject.Bind(s_SceneData->LastUsedTextureUnit+1);
+        Storage.PhongShader->SetInt("u_Environment", s_SceneData->LastUsedTextureUnit);
 
-        RenderCommand::DrawIndexed(vertexArray, mode);
+        RendererAPI::GetInstance().DrawIndexed(vertexArray, mode);
         s_Stats.DrawCalls += 1;
         s_Stats.Indices += vertexArray->GetIndexBufer()->GetCount();
     }
@@ -128,6 +140,11 @@ namespace Ra
         Storage.PhongShader->SetVec3(uniformLightToken + "Color", light.Color);
         Storage.PhongShader->SetFloat(uniformLightToken + "Intensity", light.Intensity);
         s_SceneData->SubmittedDirLights++;
+    }
+
+    void Renderer::SetLastTextureUnit(std::uint32_t unit)
+    {
+        s_SceneData->LastUsedTextureUnit = unit;
     }
 
     Ra::RendererStats Renderer::GetStats()

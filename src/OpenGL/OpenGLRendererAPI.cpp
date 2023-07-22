@@ -1,6 +1,7 @@
 #include "rapch.h"
 #include "OpenGL/OpenGLRendererAPI.hpp"
 #include "VertexArray.hpp"
+#include "Buffer.hpp"
 #include <glad/glad.h>
 
 namespace Ra
@@ -19,6 +20,11 @@ namespace Ra
         }
     }
 
+    OpenGLRendererAPI::OpenGLRendererAPI()
+    {
+        Init();
+    }
+
     void OpenGLRendererAPI::Init()
     {
 #ifdef RA_DEBUG
@@ -30,8 +36,11 @@ namespace Ra
         glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
 
         glEnable(GL_DEPTH_TEST);
+        glEnable(GL_STENCIL_TEST);
         glEnable(GL_LINE_SMOOTH);
         glEnable(GL_MULTISAMPLE);
+        glEnable(GL_BLEND);
+        glEnable(GL_CULL_FACE);
         glPointSize(10);
     }
 
@@ -53,12 +62,38 @@ namespace Ra
     void OpenGLRendererAPI::DrawIndexed(const Ref<VertexArray>& array, DrawMode mode, std::size_t indexCount)
     {
         array->Bind();
-        glDrawElements(ToAPIDrawMode_(mode), (GLsizei)indexCount, GL_UNSIGNED_INT, nullptr);
+        glDrawElements(ToAPIDrawMode_(mode), static_cast<GLsizei>(indexCount != 0 ? indexCount : array->GetIndexBufer()->GetCount()), GL_UNSIGNED_INT, nullptr);
+    }
+
+    void OpenGLRendererAPI::SetDepthBufferReadOnly(bool readOnly)
+    {
+        glDepthMask(readOnly ? GL_FALSE : GL_TRUE);
+    }
+
+    void OpenGLRendererAPI::SetDepthFunc(DepthFunc func)
+    {
+        glDepthFunc(ToAPIDepthFunc_(func));
     }
 
     int OpenGLRendererAPI::ToAPIDrawMode_(RendererAPI::DrawMode mode)
     {
         return s_ToAPIDrawModeMap.at(mode);
+    }
+
+    int OpenGLRendererAPI::ToAPIDepthFunc_(RendererAPI::DepthFunc func)
+    {
+        switch (func)
+        {
+        case RendererAPI::DepthFunc::Always:        return GL_ALWAYS;
+        case RendererAPI::DepthFunc::Never:         return GL_NEVER;
+        case RendererAPI::DepthFunc::Less:          return GL_LESS;
+        case RendererAPI::DepthFunc::Equal:         return GL_EQUAL;
+        case RendererAPI::DepthFunc::Lequal:        return GL_LEQUAL;
+        case RendererAPI::DepthFunc::Greater:       return GL_GREATER;
+        case RendererAPI::DepthFunc::Gequal:        return GL_GEQUAL;
+        case RendererAPI::DepthFunc::NotEqual:      return GL_NOTEQUAL;
+        }
+        return GL_LESS;
     }
 
     const std::unordered_map<Ra::RendererAPI::DrawMode, int> OpenGLRendererAPI::s_ToAPIDrawModeMap = {

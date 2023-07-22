@@ -99,6 +99,7 @@ namespace Ra
         TextureFilter m_MinFilter{ TextureFilter::Linear }, m_MagFilter{ TextureFilter::Linear };
         std::string m_Path{ "Internal resource" };
         TextureType m_Type{ TextureType::Diffuse };
+        int m_TextureUnit{ 0 };
     };
 
 }

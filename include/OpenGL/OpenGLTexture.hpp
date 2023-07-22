@@ -27,7 +27,6 @@ namespace Ra
     private:
         RendererId m_Handle;
         GLenum m_Target;
-        int m_ActiveId{ 0 };
     };
 
 }

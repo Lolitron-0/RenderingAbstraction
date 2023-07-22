@@ -5,6 +5,7 @@
 #include "ShaderUserData.hpp"
 #include "Stopwatch.hpp"
 #include "Lights.hpp"
+#include "Skybox.hpp"
 #include <glm/glm.hpp>
 
 namespace Ra
@@ -19,6 +20,7 @@ namespace Ra
     {
         Ref<Mesh> VectorMesh;
         Ref<Shader> PhongShader;
+        Ref<Shader> SkyboxShader;
 
         Material DebugMaterial;
     };
@@ -59,10 +61,8 @@ namespace Ra
             s_RendererAPI = api;
         }
 
-        /// Initializes scene with given camera
-        static void BeginScene(const Camera& camera);
         /// Initializes scene with given view-projection matrix (for custom camera systems)
-        static void BeginScene(const glm::mat4& viewProjection, const glm::vec3& cameraPosition);
+        static void BeginScene(const glm::mat4& viewMatrix, const glm::mat4& projMatrix, const glm::vec3& cameraPosition, const Skybox& skybox);
         /// Marks scene as finished
         static void EndScene();
 
@@ -85,7 +85,7 @@ namespace Ra
          * @param mode Drawing mode (e.g. triangles, lines, points, etc.)
         */
         static void Submit(const Ref<VertexArray>& vertexArray, const Transform& transform, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
-        
+
         static void Submit(const Ref<Mesh>& mesh, const Transform& transform, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
 
         static void DrawVector(const glm::vec3& position, const glm::vec3& direction);
@@ -94,22 +94,32 @@ namespace Ra
 
         static void SubmitLight(const DirLight& light);
 
+        /// Sets last used texture unit
+        static void SetLastTextureUnit(std::uint32_t unit);
+
         static RendererStats GetStats();
 
         static Renderer3DData Storage;
 
     private:
-        static RendererStats s_Stats;
+        static void DrawSkybox(const Skybox& skybox);
 
-        static RendererAPI::API s_RendererAPI;
-
+    private:
         struct SceneData
         {
+            glm::mat4 ViewMatrix;
+            glm::mat4 ProjMatrix;
             glm::mat4 ViewProjectionMatrix;
             glm::vec3 CameraPosition;
             std::uint16_t SubmittedPointLights{ 0 };
             std::uint16_t SubmittedDirLights{ 0 };
+            std::uint8_t LastUsedTextureUnit{ 0 };
+            Skybox SkyboxObject;
         };
+
+        static RendererStats s_Stats;
+
+        static RendererAPI::API s_RendererAPI;
 
         static Scope<SceneData> s_SceneData;
     };

@@ -13,4 +13,11 @@ namespace Ra
         default: { RA_ASSERT(false, "No rendering API has been set!"); return nullptr; }
         }
     }
+
+    RendererAPI* RendererAPI::createInstance()
+    {
+        auto inst = RendererAPI::Create();
+        return inst.release();
+    }
+
 }

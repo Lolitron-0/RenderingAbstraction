@@ -32,5 +32,10 @@ namespace Ra
         s_RendererAPI->DrawIndexed(array, mode, indexCount ? indexCount : array->GetIndexBufer()->GetCount());
     }
 
+    void RenderCommand::SetDepthBufferReadOnly(bool readOnly)
+    {
+        s_RendererAPI->SetDepthBufferReadOnly(readOnly);
+    }
+
     Scope<Ra::RendererAPI> RenderCommand::s_RendererAPI = nullptr;
 }

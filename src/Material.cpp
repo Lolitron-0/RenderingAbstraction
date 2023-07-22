@@ -34,6 +34,10 @@ namespace Ra
         shader->SetVec3("u_Material.BaseColor", BaseColor);
         shader->SetFloat("u_Material.Shininess", Shininess);
         shader->SetFloat("u_Material.Opacity", Opacity);
+        shader->SetFloat("u_Material.Reflection", Reflection);
+        shader->SetFloat("u_Material.Refraction", Refraction);
+        shader->SetFloat("u_Material.RefractiveIndex", RefractiveIndex);
+        shader->SetFloat("u_Material.Opacity", Opacity);
         shader->SetBool("u_Material.SkipLight", SkipLight);
     }
 

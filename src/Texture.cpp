@@ -14,7 +14,7 @@ namespace Ra
         Ref<Texture> ret;
         switch (Renderer::GetAPI())
         {
-        case RendererAPI::API::OpenGL: ret = MakeScope<OpenGLTexture>(); break;
+        case RendererAPI::API::OpenGL: ret = MakeRef<OpenGLTexture>(); break;
         default: ret = nullptr; break;
         }
         
@@ -33,7 +33,7 @@ namespace Ra
         Ref<Texture> ret;
         switch (Renderer::GetAPI())
         {
-        case RendererAPI::API::OpenGL: ret = MakeScope<OpenGLTexture>(); break;
+        case RendererAPI::API::OpenGL: ret = MakeRef<OpenGLTexture>(); break;
         default: ret = nullptr; break;
         }
         {

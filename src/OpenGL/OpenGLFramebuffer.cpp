@@ -184,9 +184,9 @@ namespace Ra
         // Resolve framebuffer
         if (m_Properties.Samples > 1)
         {
-            m_ResolvedAttachments.resize(m_ColorAttachmentSpecifications.size());
             glGenFramebuffers(1, &m_ResolveFramebufferHandle);
             glBindFramebuffer(GL_FRAMEBUFFER, m_ResolveFramebufferHandle);
+            m_ResolvedAttachments.resize(m_ColorAttachmentSpecifications.size());
 
             for (std::size_t i = 0; i < m_ColorAttachmentSpecifications.size(); i++)
             {
@@ -204,7 +204,7 @@ namespace Ra
                     RA_ASSERT(false, "Wrong TextureFormat");
                     break;
                 }
-                m_ResolvedAttachments.push_back(textureId);
+                m_ResolvedAttachments[i] = textureId;
             }
             RA_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Resolve framebuffer is incomplete!");
         }

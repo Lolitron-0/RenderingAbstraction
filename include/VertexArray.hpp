@@ -25,6 +25,13 @@ namespace Ra
         */
         virtual void SetIndexBuffer(const Ref<IndexBuffer>& buffer) = 0;
 
+        /**
+         * @brief Sets index buffer, containing numbers from 0 to vertexCount
+         * Used when vertex order is defined in VertexBuffer manually
+         * @param vertexCount Number of vertices
+        */
+        virtual void SetDefaultIndexBuffer(std::size_t vertexCount) = 0;
+
         virtual std::vector<Ref<VertexBuffer>> GetVertexBuffers() const = 0;
         virtual Ref<IndexBuffer> GetIndexBufer() const = 0;
 

@@ -131,7 +131,7 @@ namespace Ra
 
         /**
          * @brief Factory method for vertex buffer creation
-         * @param size size of the buffer
+         * @param size size of the buffer in bytes
          * @return Ref counted object to abstract vertex buffer interface, nullptr in case of unknown/unset rendering API
          * @note If no data provided dynamic drawn buffer will be created
         */
@@ -139,7 +139,7 @@ namespace Ra
         /**
          * @brief Factory method for vertex buffer creation
          * @param data Pointer to vertex data
-         * @param size Size of the buffer
+         * @param size Size of the buffer in bytes
          * @return Ref counted object to abstract vertex buffer interface, nullptr in case of unknown/unset rendering API
         */
         static Scope<VertexBuffer> Create(const void* data, std::size_t size);

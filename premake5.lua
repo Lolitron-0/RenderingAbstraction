@@ -59,3 +59,4 @@ project "RenderAbstraction"
 		runtime "Release"
 		links{ "%{prj.location}/thirdparty/assimp/lib/Release/assimp-vc143-mt.lib" }
 		optimize "on"
+		symbols "off"

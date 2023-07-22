@@ -51,11 +51,11 @@ namespace Ra
     void OpenGLTexture::LoadFromFile_(const std::string& path, TextureFormat format /*= TextureFormat::Color*/, TextureType type)
     {
         this->m_Format = format;
+        m_Path = path;
 
         Bind();
         int tWidth, tHeight, tNumChannels;
         std::uint8_t* tData = stbi_load(path.c_str(), &tWidth, &tHeight, &tNumChannels, 0);
-        m_Path = path;
 
         RA_ASSERT(tData, stbi_failure_reason());
         LoadFromData_(tData, tWidth, tHeight, tNumChannels, format);
@@ -99,13 +99,14 @@ namespace Ra
 
     void OpenGLTexture::Bind()
     {
-        glActiveTexture(GL_TEXTURE0 + this->m_ActiveId);
+        Renderer::SetLastTextureUnit(m_TextureUnit);
+        glActiveTexture(GL_TEXTURE0 + this->m_TextureUnit);
         glBindTexture(m_Target, m_Handle);
     }
 
     void OpenGLTexture::Bind(int id)
     {
-        m_ActiveId = id;
+        m_TextureUnit = id;
         Bind();
     }
 

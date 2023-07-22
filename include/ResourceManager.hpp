@@ -1,6 +1,7 @@
 #pragma once
 #include "Texture.hpp"
 #include "Mesh.hpp"
+#include "Cubemap.hpp"
 
 namespace Ra
 {
@@ -12,6 +13,7 @@ namespace Ra
             Unknown,
             Texture,
             Mesh,
+            Cubemap,
         };
 
     public:
@@ -51,6 +53,8 @@ namespace Ra
                 return ResourceManager::ResourceType::Texture;
             else if (typeid(T) == typeid(Mesh))
                 return ResourceManager::ResourceType::Mesh;
+            else if (typeid(T) == typeid(Cubemap))
+                return ResourceManager::ResourceType::Cubemap;
             return ResourceManager::ResourceType::Unknown;
         }
 

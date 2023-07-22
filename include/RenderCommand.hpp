@@ -24,6 +24,9 @@ namespace Ra
         /// Draws given VertexArray using chosen DrawMode. Optionally index count can be specified so not all vertices will be drawn
         static void DrawIndexed(const Ref<VertexArray>& array, RendererAPI::DrawMode mode, std::size_t indexCount = 0);
 
+        /// Enables/Disables writing to depth buffer
+        static void SetDepthBufferReadOnly(bool readOnly);
+
     private:
         static Scope<RendererAPI> s_RendererAPI;
     };
