@@ -21,8 +21,8 @@ namespace Ra
 
         RendererId GetNativeTerxtureHandle() const override;
     private:
-        void LoadFromFile_(const std::string& path, TextureFormat format = TextureFormat::Color, TextureType type = TextureType::Diffuse) override;
-        void LoadFromData_(std::uint8_t* rawData, std::uint32_t width, std::uint32_t height, std::uint32_t channels, TextureFormat format = TextureFormat::Color, TextureType type = TextureType::Diffuse) override;
+        void LoadFromFile_(const std::string& path, TextureFormat format = TextureFormat::ColorLinear, TextureType type = TextureType::Diffuse) override;
+        void LoadFromData_(std::uint8_t* rawData, std::uint32_t width, std::uint32_t height, std::uint32_t channels, TextureFormat format = TextureFormat::ColorLinear, TextureType type = TextureType::Diffuse) override;
 
     private:
         RendererId m_Handle;

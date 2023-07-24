@@ -110,16 +110,20 @@ namespace Ra
     std::vector<Ra::Ref<Ra::Texture>> MeshImpl::LoadMaterialTextures_(aiMaterial* material, TextureType type)
     {
         aiTextureType aiType{ aiTextureType_NONE };
+        TextureFormat format = TextureFormat::ColorLinear;
         switch (type)
         {
         case Ra::TextureType::Diffuse:
             aiType = aiTextureType_DIFFUSE;
+            format = TextureFormat::ColorCorrected;
             break;
         case Ra::TextureType::Specular:
             aiType = aiTextureType_SPECULAR;
+            format = TextureFormat::ColorLinear;
             break;
         case Ra::TextureType::Normal:
             aiType = aiTextureType_NORMALS;
+            format = TextureFormat::ColorLinear;
             break;
         }
 
@@ -129,7 +133,7 @@ namespace Ra
         {
             aiString pathBuf;
             material->GetTexture(aiType, i, &pathBuf);
-            Ref<Texture> texture = Texture::Create(m_Path.parent_path().string() + "/" + std::string(pathBuf.C_Str()), TextureFormat::Color, type);
+            Ref<Texture> texture = Texture::Create(m_Path.parent_path().string() + "/" + std::string(pathBuf.C_Str()), format, type);
             textures.push_back(texture);
         }
 

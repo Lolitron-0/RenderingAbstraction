@@ -16,6 +16,8 @@ namespace Ra
         GL_RG32F,
         GL_RGB8,
         GL_RGBA8,
+        GL_SRGB8,
+        GL_SRGB8_ALPHA8,
         GL_RGB16,
         GL_RGB16F,
         GL_RGBA16,

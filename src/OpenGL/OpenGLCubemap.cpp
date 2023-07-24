@@ -44,12 +44,12 @@ namespace Ra
         quadSize = 500;
         int xOffset[6] = { 2, 0, 1, 1, 1, 3 };
         int yOffset[6] = { 1, 1, 0, 2, 1, 1 };
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + 0, 0, GL_RGB, tWidth, tHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, tData);
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + 1, 0, GL_RGB, tWidth, tHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, tData);
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + 2, 0, GL_RGB, tWidth, tHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, tData);
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + 3, 0, GL_RGB, tWidth, tHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, tData);
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + 4, 0, GL_RGB, tWidth, tHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, tData);
-        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + 5, 0, GL_RGB, tWidth, tHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, tData);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + 0, 0, GL_SRGB, tWidth, tHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, tData);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + 1, 0, GL_SRGB, tWidth, tHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, tData);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + 2, 0, GL_SRGB, tWidth, tHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, tData);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + 3, 0, GL_SRGB, tWidth, tHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, tData);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + 4, 0, GL_SRGB, tWidth, tHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, tData);
+        glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + 5, 0, GL_SRGB, tWidth, tHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, tData);
 
         stbi_image_free(tData);
     }
@@ -65,7 +65,7 @@ namespace Ra
         {
             std::uint8_t* tData = stbi_load(paths[i].c_str(), &tWidth, &tHeight, &tNumChannels, 0);
             RA_ASSERT(tData, stbi_failure_reason());
-            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_RGB, tWidth, tHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, tData);
+            glTexImage2D(GL_TEXTURE_CUBE_MAP_POSITIVE_X + i, 0, GL_SRGB, tWidth, tHeight, 0, GL_RGB, GL_UNSIGNED_BYTE, tData);
             stbi_image_free(tData);
         }
 

@@ -19,7 +19,7 @@ namespace Ra
     struct Renderer3DData
     {
         Ref<Mesh> VectorMesh;
-        Ref<Shader> PhongShader;
+        Ref<Shader> BlinnPhongShader;
         Ref<Shader> SkyboxShader;
 
         Material DebugMaterial;

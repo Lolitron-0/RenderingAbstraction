@@ -16,6 +16,8 @@ namespace Ra
         RG32F,
         RGB8,
         RGBA8,
+        sRGB8,
+        sRGBA8,
         RGB16,
         RGB16F,
         RGBA16,
@@ -25,7 +27,8 @@ namespace Ra
         Depth24Stencil8,
 
         //defaults
-        Color = RGBA8,
+        ColorLinear = RGBA8,
+        ColorCorrected = sRGBA8,
         Depth = Depth24Stencil8
     };
 
@@ -83,14 +86,14 @@ namespace Ra
         virtual void SetMagFilter(TextureFilter filter) = 0;
         virtual void SetWrap(TextureWrap wrap) = 0;
 
-        static Ref<Texture> Create(const std::string& path, TextureFormat format = TextureFormat::Color, TextureType type = TextureType::Diffuse);
-        static Ref<Texture> Create(std::uint8_t* rawData, std::uint32_t width, std::uint32_t height, std::uint32_t channels, TextureFormat format = TextureFormat::Color, TextureType type = TextureType::Diffuse);
+        static Ref<Texture> Create(const std::string& path, TextureFormat format = TextureFormat::ColorLinear, TextureType type = TextureType::Diffuse);
+        static Ref<Texture> Create(std::uint8_t* rawData, std::uint32_t width, std::uint32_t height, std::uint32_t channels, TextureFormat format = TextureFormat::ColorLinear, TextureType type = TextureType::Diffuse);
 
         static Ref<Texture> NullTexture;
 
     protected:
-        virtual void LoadFromFile_(const std::string& path, TextureFormat format = TextureFormat::Color, TextureType type = TextureType::Diffuse) = 0;
-        virtual void LoadFromData_(std::uint8_t* rawData, std::uint32_t width, std::uint32_t height, std::uint32_t channels, TextureFormat format = TextureFormat::Color, TextureType type = TextureType::Diffuse) = 0;
+        virtual void LoadFromFile_(const std::string& path, TextureFormat format = TextureFormat::ColorLinear, TextureType type = TextureType::Diffuse) = 0;
+        virtual void LoadFromData_(std::uint8_t* rawData, std::uint32_t width, std::uint32_t height, std::uint32_t channels, TextureFormat format = TextureFormat::ColorLinear, TextureType type = TextureType::Diffuse) = 0;
 
     protected:
         std::uint32_t m_Width{ 0 }, m_Height{ 0 };

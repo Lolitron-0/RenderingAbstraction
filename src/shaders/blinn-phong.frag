@@ -72,6 +72,7 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec3 diffuseBase);
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 diffuseBase);
 vec3 CalcEnvironmentMap(samplerCube environment, vec3 normal, vec3 viewDir);
 
+
 void main()
 {
 	vec3 result = vec3(0);
@@ -111,6 +112,11 @@ void main()
 	result += CalcEnvironmentMap(u_Environment, norm, viewDir);
 	fragmentColor = vec4(result,1);
 	fragmentColor.a = u_Material.Opacity;
+
+	// Gamma correction
+	float gamma = 2.2;
+	fragmentColor.rgb = pow(fragmentColor.rgb, vec3(1.0/gamma));
+
 	entityId = 234;
 }
 
@@ -129,13 +135,14 @@ vec3 CalcEnvironmentMap(samplerCube environment, vec3 normal, vec3 viewDir)
 
 vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec3 diffuseBase) {	
 	vec3 lightDir = normalize(light.Direction);
+	vec3 halfway = normalize(-lightDir - viewDir);
 
 	// diffuse
 	float diff = max(dot(normal, -lightDir), 0.0); // negate to match normal dir
 
 	//specular
 	vec3 reflectDir = reflect(lightDir, normal); //actual reflect
-	float spec = pow(max(dot(reflectDir, -viewDir), 0.0), u_Material.Shininess);
+	float spec = pow(max(dot(halfway, normal), 0.0), u_Material.Shininess);
 
 	vec3 ambient = LIGHT_AMBIENT * light.Color * diffuseBase;
 	vec3 diffuse = LIGHT_DIFFUSE *  light.Color * light.Intensity * (diff * diffuseBase);
@@ -153,13 +160,14 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec3 diffuseBase) {
 
 vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 diffuseBase) {
 	vec3 lightDir = normalize(fragPos - light.Position);
+	vec3 halfway = normalize(-lightDir - viewDir);
 
 	// diffuse
 	float diff = max(dot(normal, -lightDir), 0.0); // negate to match normal dir
 
 	//specular
 	vec3 reflectDir = reflect(lightDir, normal); //actual reflect
-	float spec = pow(max(dot(reflectDir, -viewDir), 0.0), u_Material.Shininess);
+	float spec = pow(max(dot(halfway, normal), 0.0), u_Material.Shininess);
 
 	float constant = 1.;
 	float linear = .09;
@@ -167,9 +175,10 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
 
 	//attenuation
 	float distance = length(light.Position - fragPos);
-	float attenuation =  1.0 / (quadratic*(distance*distance) +
-							   linear*distance + 
-							   constant);
+//	float attenuation =  1.0 / (quadratic*(distance*distance) +
+//							   linear*distance + 
+//							   constant);
+	float attenuation = 1.0 / (distance*distance);
 
 
 	vec3 ambient =  LIGHT_AMBIENT * light.Color * attenuation * diffuseBase;

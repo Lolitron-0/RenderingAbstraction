@@ -9,5 +9,8 @@ out vec4 fragmentColor;
 void main()
 {
 	fragmentColor = texture(u_Skybox, TexCoords);
-	//fragmentColor = vec4(0, 0, TexCoords.z, 1);
+	
+	// Gamma correction
+	float gamma = 2.2;
+	fragmentColor.rgb = pow(fragmentColor.rgb, vec3(1.0/gamma));
 }

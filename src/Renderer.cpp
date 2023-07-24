@@ -30,7 +30,7 @@ namespace Ra
         //if (s_RendererAPI != RendererAPI::API::None)
         //    RenderCommand::Init();
 
-        Storage.PhongShader = Shader::Create(GetShadersDir()+"phong.vert", GetShadersDir()+"phong.frag");
+        Storage.BlinnPhongShader = Shader::Create(GetShadersDir()+"blinn-phong.vert", GetShadersDir()+"blinn-phong.frag");
         Storage.SkyboxShader = Shader::Create(GetShadersDir()+"skybox.vert", GetShadersDir()+"skybox.frag");
 
         Storage.VectorMesh = Mesh::Create(GetMeshesDir() + "Vector.fbx");
@@ -78,17 +78,17 @@ namespace Ra
     void Renderer::Submit(const Ref<VertexArray>& vertexArray, const Transform& transform, RendererAPI::DrawMode mode /*= RendererAPI::DrawMode::Triangles*/)
     {
         PROFILER_SCOPE("Renderer::Submit( VertexArray )");
-        Storage.PhongShader->Bind();
-        Storage.PhongShader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
-        Storage.PhongShader->SetMat4("u_Model", transform.Model);
-        Storage.PhongShader->SetMat3("u_NormalModel", transform.Normal);
+        Storage.BlinnPhongShader->Bind();
+        Storage.BlinnPhongShader->SetMat4("u_ViewProjection", s_SceneData->ViewProjectionMatrix);
+        Storage.BlinnPhongShader->SetMat4("u_Model", transform.Model);
+        Storage.BlinnPhongShader->SetMat3("u_NormalModel", transform.Normal);
         RA_ASSERT(s_SceneData->SubmittedPointLights <= 128, "Too many point lights!");
-        Storage.PhongShader->SetInt("u_PointLightsCount", s_SceneData->SubmittedPointLights);
+        Storage.BlinnPhongShader->SetInt("u_PointLightsCount", s_SceneData->SubmittedPointLights);
         RA_ASSERT(s_SceneData->SubmittedDirLights <= 1, "Too many dir lights!");
-        Storage.PhongShader->SetInt("u_DirLightsCount", s_SceneData->SubmittedDirLights);
-        Storage.PhongShader->SetVec3("u_CameraPosition", s_SceneData->CameraPosition);
+        Storage.BlinnPhongShader->SetInt("u_DirLightsCount", s_SceneData->SubmittedDirLights);
+        Storage.BlinnPhongShader->SetVec3("u_CameraPosition", s_SceneData->CameraPosition);
         s_SceneData->SkyboxObject.Bind(s_SceneData->LastUsedTextureUnit+1);
-        Storage.PhongShader->SetInt("u_Environment", s_SceneData->LastUsedTextureUnit);
+        Storage.BlinnPhongShader->SetInt("u_Environment", s_SceneData->LastUsedTextureUnit);
 
         RendererAPI::GetInstance().DrawIndexed(vertexArray, mode);
         s_Stats.DrawCalls += 1;
@@ -102,7 +102,7 @@ namespace Ra
         for (auto& it : subMeshes)
         {
             PROFILER_SCOPE("Renderer: submesh iteration")
-            it.GetMaterial().LoadTo(Storage.PhongShader);
+            it.GetMaterial().LoadTo(Storage.BlinnPhongShader);
             Submit(it.GetVertexArray(), transform, mode);
         }
     }
@@ -126,19 +126,19 @@ namespace Ra
     void Renderer::SubmitLight(const PointLight& light, const glm::vec3& position)
     {
         std::string uniformLightToken = "u_PointLights[" + std::to_string(s_SceneData->SubmittedPointLights++) + "].";
-        Storage.PhongShader->Bind();
-        Storage.PhongShader->SetVec3(uniformLightToken + "Position", position);
-        Storage.PhongShader->SetVec3(uniformLightToken + "Color", light.Color);
-        Storage.PhongShader->SetFloat(uniformLightToken + "Intensity", light.Intensity);
+        Storage.BlinnPhongShader->Bind();
+        Storage.BlinnPhongShader->SetVec3(uniformLightToken + "Position", position);
+        Storage.BlinnPhongShader->SetVec3(uniformLightToken + "Color", light.Color);
+        Storage.BlinnPhongShader->SetFloat(uniformLightToken + "Intensity", light.Intensity);
     }
 
     void Renderer::SubmitLight(const DirLight& light)
     {
         std::string uniformLightToken = "u_DirLight.";
-        Storage.PhongShader->Bind();
-        Storage.PhongShader->SetVec3(uniformLightToken + "Direction", light.Direction);
-        Storage.PhongShader->SetVec3(uniformLightToken + "Color", light.Color);
-        Storage.PhongShader->SetFloat(uniformLightToken + "Intensity", light.Intensity);
+        Storage.BlinnPhongShader->Bind();
+        Storage.BlinnPhongShader->SetVec3(uniformLightToken + "Direction", light.Direction);
+        Storage.BlinnPhongShader->SetVec3(uniformLightToken + "Color", light.Color);
+        Storage.BlinnPhongShader->SetFloat(uniformLightToken + "Intensity", light.Intensity);
         s_SceneData->SubmittedDirLights++;
     }
 
