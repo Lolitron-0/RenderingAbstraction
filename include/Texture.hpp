@@ -25,11 +25,12 @@ namespace Ra
         RGB32F,
         RGBA32F,
         Depth24Stencil8,
+        DepthComponent,
 
         //defaults
         ColorLinear = RGBA8,
         ColorCorrected = sRGBA8,
-        Depth = Depth24Stencil8
+        DepthStencil = Depth24Stencil8
     };
 
     /// Enum for texture wrapping mode

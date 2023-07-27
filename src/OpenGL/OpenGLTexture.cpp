@@ -24,7 +24,8 @@ namespace Ra
         GL_RGBA16F,
         GL_RGB32F,
         GL_RGBA32F,
-        GL_DEPTH24_STENCIL8
+        GL_DEPTH24_STENCIL8,
+        GL_DEPTH_COMPONENT,
     };
 
     static GLenum g_TextureFilterTable[] = {

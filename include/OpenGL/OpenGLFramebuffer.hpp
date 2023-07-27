@@ -15,11 +15,18 @@ namespace Ra
         void Resize(std::uint32_t width, std::uint32_t height) override;
 
         RendererId GetColorAttachmentHandle(std::size_t index) const override;
+        void BindColorAttachment(std::size_t index = 0) override;
+
         RendererId GetDrawTextureHandle(std::size_t index = 0) const override;
+        void BindDrawTexture(std::size_t index = 0) override;
+
+        RendererId GetDepthTextureHandle() override;
+        void BindDepthTexture() override;
 
         const FramebufferProperties& GetProperties() const override;
 
         int ReadPixel(std::uint32_t attachmentIndex, int x, int y, bool leaveBound = true) override;
+
 
     private:
         void Invalidate_();

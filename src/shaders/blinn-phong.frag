@@ -1,6 +1,6 @@
 #version 330 core
 #define MAX_POINT_LIGHTS 128
-#define LIGHT_AMBIENT 0.2
+#define LIGHT_AMBIENT 0.1
 #define LIGHT_DIFFUSE 0.5
 #define LIGHT_SPECULAR 1.0
 
@@ -16,7 +16,6 @@ bool textureValid(sampler2D tex)
 {
 	return textureSize(tex, 0) != ivec2(1,1);
 }
-
 
 struct Material 
 {
@@ -38,7 +37,7 @@ struct Material
 	float Refraction;
 	float RefractiveIndex;
 	float Shininess;
-	bool SkipLight;
+	bool CastShadows;
 };
 
 struct PointLight {
@@ -53,12 +52,15 @@ struct DirLight {
 	float Intensity;
 };
 
-in vec3 Position;
-in vec2 TexCoord;
-in vec3 Normal;
+in VS_OUT {
+	vec3 FragPos;
+	vec2 TexCoord;
+	vec3 Normal;
+	vec4 FragPosLightSpace;
+} fs_in;
 
 layout(location=0) out vec4 fragmentColor;
-layout(location=1) out int entityId;
+//layout(location=1) out int entityId;
 
 uniform vec3 u_CameraPosition;
 uniform Material u_Material;
@@ -67,11 +69,13 @@ uniform int u_PointLightsCount;
 uniform DirLight u_DirLight;
 uniform int u_DirLightsCount;
 uniform samplerCube u_Environment;
+uniform sampler2D u_ShadowMap;
 
-vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec3 diffuseBase);
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 diffuseBase);
+
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec3 diffuseBase, float shadow);
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 diffuseBase, float shadow);
 vec3 CalcEnvironmentMap(samplerCube environment, vec3 normal, vec3 viewDir);
-
+float CalcShadow(DirLight light, vec4 lightSpaceFragPos, vec3 normal);
 
 void main()
 {
@@ -79,7 +83,7 @@ void main()
 	vec4 base;
 	if (textureSize(u_Material.DiffuseMap1, 0) != ivec2(1,1))
 	{
-		base = texture(u_Material.DiffuseMap1, TexCoord);
+		base = texture(u_Material.DiffuseMap1, fs_in.TexCoord);
 	}
 	else
 		base = vec4(u_Material.BaseColor, 1); 
@@ -87,27 +91,23 @@ void main()
 	if (base.a <= 0.05)
 		discard;
 
-	vec3 norm = normalize(Normal);
-	vec3 viewDir = normalize(Position - u_CameraPosition);
-	if (!u_Material.SkipLight)
-	{
+	vec3 norm = normalize(fs_in.Normal);
+	vec3 viewDir = normalize(fs_in.FragPos - u_CameraPosition);
 
-		// Directional lights
-		for (int i = 0; i < u_DirLightsCount; i++)
-		{
-			result += CalcDirLight(u_DirLight, norm, viewDir, vec3(base));
-		}
+	float shadow = CalcShadow(u_DirLight, fs_in.FragPosLightSpace, norm);
 
-		// Point lights
-		for (int i = 0; i < u_PointLightsCount; i++)
-		{
-			result += CalcPointLight(u_PointLights[i], norm, Position, viewDir, vec3(base));
-		}
-	}
-	else
+	// Directional lights
+	for (int i = 0; i < u_DirLightsCount; i++)
 	{
-		result = vec3(base);
+		result += CalcDirLight(u_DirLight, norm, viewDir, vec3(base), shadow);
 	}
+
+	// Point lights
+	for (int i = 0; i < u_PointLightsCount; i++)
+	{
+		result += CalcPointLight(u_PointLights[i], norm, fs_in.FragPos, viewDir, vec3(base), shadow);
+	}
+
 	
 	result += CalcEnvironmentMap(u_Environment, norm, viewDir);
 	fragmentColor = vec4(result,1);
@@ -116,8 +116,11 @@ void main()
 	// Gamma correction
 	float gamma = 2.2;
 	fragmentColor.rgb = pow(fragmentColor.rgb, vec3(1.0/gamma));
+	
+	//fragmentColor.rgb = texture(u_ShadowMap, ((fs_in.FragPosLightSpace.xyz / fs_in.FragPosLightSpace.w)*0.5+0.5).xy).rrr;
+	//fragmentColor.rgb = (fs_in.FragPosLightSpace.xyz / fs_in.FragPosLightSpace.w)*0.5+0.5;
 
-	entityId = 234;
+	//entityId = 234;
 }
 
 
@@ -133,7 +136,7 @@ vec3 CalcEnvironmentMap(samplerCube environment, vec3 normal, vec3 viewDir)
 }
 
 
-vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec3 diffuseBase) {	
+vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec3 diffuseBase, float shadow) {	
 	vec3 lightDir = normalize(light.Direction);
 	vec3 halfway = normalize(-lightDir - viewDir);
 
@@ -149,16 +152,16 @@ vec3 CalcDirLight(DirLight light, vec3 normal, vec3 viewDir, vec3 diffuseBase) {
 
 	vec3 specBase;
 	if (textureValid(u_Material.SpecularMap1))
-		specBase = vec3(texture(u_Material.SpecularMap1, TexCoord));
+		specBase = vec3(texture(u_Material.SpecularMap1, fs_in.TexCoord));
 	else
 		specBase = diffuseBase;
 
 	vec3 specular = light.Intensity * LIGHT_SPECULAR * (spec * specBase);
 
-	return (ambient + diffuse + specular);
+	return (ambient + (1.0 - shadow) * (diffuse + specular));
 }
 
-vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 diffuseBase) {
+vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, vec3 diffuseBase, float shadow) {
 	vec3 lightDir = normalize(fragPos - light.Position);
 	vec3 halfway = normalize(-lightDir - viewDir);
 
@@ -185,10 +188,41 @@ vec3 CalcPointLight(PointLight light, vec3 normal, vec3 fragPos, vec3 viewDir, v
 	vec3 diffuse =  LIGHT_DIFFUSE * light.Color * light.Intensity * attenuation * (diff * diffuseBase);
 	vec3 specBase;
 	if (textureValid(u_Material.SpecularMap1))
-		specBase = vec3(texture(u_Material.SpecularMap1, TexCoord));
+		specBase = vec3(texture(u_Material.SpecularMap1, fs_in.TexCoord));
 	else
 		specBase = diffuseBase;
 	vec3 specular = light.Intensity * attenuation * LIGHT_SPECULAR *  vec3(1,1,1) * (spec * specBase);
 
-	return (ambient + diffuse + specular);
+	return (ambient + (1.0 - shadow) * (diffuse + specular));
+}
+
+float CalcShadow(DirLight light, vec4 lightSpaceFragPos, vec3 normal)
+{
+	vec3 lightDir = normalize(light.Direction);
+
+	vec3 projCoords = lightSpaceFragPos.xyz / lightSpaceFragPos.w;
+	projCoords = projCoords * 0.5 + 0.5;
+	float currentDepth = projCoords.z;
+	float bias = max(0.0005, 0.005 * (1.0 - dot(normal, -lightDir)));
+	//bias = 0.0005;
+
+	float shadow = 0;
+	vec2 texelSize = 1.0 / textureSize(u_ShadowMap, 0);
+
+	int sampleCount = 0;
+	for (int x = -2; x <= 2; x++)
+	{
+		for (int y = -2; y <= 2; y++)
+		{
+			float pcfDepth = texture(u_ShadowMap, projCoords.xy + vec2(x,y)*texelSize).r;
+			shadow += currentDepth - bias > pcfDepth ? 1.0 : 0.0;
+			sampleCount++;
+		}
+	}
+	shadow /= sampleCount;
+
+	if (projCoords.z > 1.0)
+		return 0.0;
+
+	return shadow;
 }

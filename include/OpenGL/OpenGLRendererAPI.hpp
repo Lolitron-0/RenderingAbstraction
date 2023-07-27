@@ -21,6 +21,7 @@ namespace Ra
         void SetDepthBufferReadOnly(bool readOnly) override;
 
         void SetDepthFunc(DepthFunc func) override;
+        void SetCullFace(CullFace face) override;
 
     protected:
         int ToAPIDrawMode_(RendererAPI::DrawMode mode) override;
@@ -28,5 +29,6 @@ namespace Ra
 
     private:
         const static std::unordered_map<RendererAPI::DrawMode, int> s_ToAPIDrawModeMap;
+
     };
 }

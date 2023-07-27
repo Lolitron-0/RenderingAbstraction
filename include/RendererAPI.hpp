@@ -10,13 +10,13 @@ namespace Ra
     class RendererAPI : public Singleton<RendererAPI>
     {
     public:
-        enum class API
+        enum class API : std::uint8_t
         {
-            None = -1,
+            None,
             OpenGL,
         };
 
-        enum class DrawMode
+        enum class DrawMode : std::uint8_t
         {
             Points = 0,
             Triangles,
@@ -30,7 +30,7 @@ namespace Ra
             Count
         };
 
-        enum class DepthFunc
+        enum class DepthFunc : std::uint8_t
         {
             Always,
             Never,
@@ -40,6 +40,13 @@ namespace Ra
             Greater,
             Gequal,
             NotEqual,
+        };
+
+        enum class CullFace : std::uint8_t
+        {
+            Both,
+            Back,
+            Front,
         };
 
     public:
@@ -57,6 +64,8 @@ namespace Ra
         virtual void SetDepthBufferReadOnly(bool readOnly) = 0;
 
         virtual void SetDepthFunc(DepthFunc func) = 0;
+
+        virtual void SetCullFace(CullFace face) = 0;
 
         static Scope<RendererAPI> Create();
 

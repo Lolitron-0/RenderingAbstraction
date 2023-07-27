@@ -15,12 +15,14 @@ namespace Ra
     class IndexBuffer;
     class Shader;
     class Mesh;
+    class Framebuffer;
 
-    struct Renderer3DData
+    struct Renderer3DStorage
     {
         Ref<Mesh> VectorMesh;
         Ref<Shader> BlinnPhongShader;
         Ref<Shader> SkyboxShader;
+        Ref<Shader> DepthShader;
 
         Material DebugMaterial;
     };
@@ -61,7 +63,11 @@ namespace Ra
             s_RendererAPI = api;
         }
 
-        /// Initializes scene with given view-projection matrix (for custom camera systems)
+        static void ResizeViewport(const glm::vec2& size);
+        static glm::vec2 GetViewportSize();
+        static RendererId GetResultTextureHandle();
+
+        /// Initializes scene with given view-projection matrix
         static void BeginScene(const glm::mat4& viewMatrix, const glm::mat4& projMatrix, const glm::vec3& cameraPosition, const Skybox& skybox);
         /// Marks scene as finished
         static void EndScene();
@@ -84,7 +90,7 @@ namespace Ra
          * @param material Material to use for drawing
          * @param mode Drawing mode (e.g. triangles, lines, points, etc.)
         */
-        static void Submit(const Ref<VertexArray>& vertexArray, const Transform& transform, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
+        static void Submit(const Ref<VertexArray>& vertexArray, const Transform& transform, Ref<Shader>& shader, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
 
         static void Submit(const Ref<Mesh>& mesh, const Transform& transform, RendererAPI::DrawMode mode = RendererAPI::DrawMode::Triangles);
 
@@ -97,9 +103,11 @@ namespace Ra
         /// Sets last used texture unit
         static void SetLastTextureUnit(std::uint32_t unit);
 
+        static std::uint8_t GetLastTextureUnit();
+
         static RendererStats GetStats();
 
-        static Renderer3DData Storage;
+        static Renderer3DStorage Storage;
 
     private:
         static void DrawSkybox(const Skybox& skybox);
@@ -110,11 +118,20 @@ namespace Ra
             glm::mat4 ViewMatrix;
             glm::mat4 ProjMatrix;
             glm::mat4 ViewProjectionMatrix;
+            glm::mat4 LightSpaceMatrix{1.f};
             glm::vec3 CameraPosition;
             std::uint16_t SubmittedPointLights{ 0 };
             std::uint16_t SubmittedDirLights{ 0 };
             std::uint8_t LastUsedTextureUnit{ 0 };
             Skybox SkyboxObject;
+            DirLight DirLightObject;
+            std::vector<std::function<void(Ref<Shader>)>> RenderQueue;
+        };
+
+        struct Renderer3DData
+        {
+            Ref<Framebuffer> ShadowMap;
+            Ref<Framebuffer> PostprocessingBuffer;
         };
 
         static RendererStats s_Stats;
@@ -122,5 +139,6 @@ namespace Ra
         static RendererAPI::API s_RendererAPI;
 
         static Scope<SceneData> s_SceneData;
+        static Renderer3DData s_RendererData;
     };
 }

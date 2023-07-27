@@ -1,6 +1,7 @@
 #include "rapch.h"
 #include "OpenGL/OpenGLFramebuffer.hpp"
 #include <glad/glad.h>
+#include "../../include/Renderer.hpp"
 
 namespace Ra
 {
@@ -19,6 +20,8 @@ namespace Ra
             switch (format)
             {
             case Ra::TextureFormat::Depth24Stencil8:
+                return true;
+            case Ra::TextureFormat::DepthComponent:
                 return true;
             }
             return false;
@@ -62,12 +65,17 @@ namespace Ra
             }
             else
             {
-                glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
+                if (format == GL_DEPTH_COMPONENT)
+                    glTexImage2D(GL_TEXTURE_2D, 0, format, width, height, 0, format, GL_FLOAT, nullptr);
+                else
+                    glTexStorage2D(GL_TEXTURE_2D, 1, format, width, height);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MIN_FILTER, GL_LINEAR);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_MAG_FILTER, GL_LINEAR);
                 glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_R, GL_CLAMP_TO_EDGE);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_EDGE);
-                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_EDGE);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_S, GL_CLAMP_TO_BORDER);
+                glTexParameteri(GL_TEXTURE_2D, GL_TEXTURE_WRAP_T, GL_CLAMP_TO_BORDER);
+                float borderColor[] = { 1.0f, 1.0f, 1.0f, 1.0f };
+                glTexParameterfv(GL_TEXTURE_2D, GL_TEXTURE_BORDER_COLOR, borderColor);
             }
 
             glFramebufferTexture2D(GL_FRAMEBUFFER, attachmentType, TextureTarget(multisampled), texture, 0);
@@ -96,6 +104,8 @@ namespace Ra
     {
         glBindFramebuffer(GL_FRAMEBUFFER, m_MainFramebufferHandle);
         glViewport(0, 0, m_Properties.Width, m_Properties.Height);
+        glClearColor(1, 0, 1, 1);
+        glClear((m_ColorAttachments.size() ? GL_COLOR_BUFFER_BIT : 0) | GL_DEPTH_BUFFER_BIT);
     }
 
     void OpenGLFramebuffer::StopWriting()
@@ -111,12 +121,12 @@ namespace Ra
         Invalidate_();
     }
 
-    Ra::RendererId OpenGLFramebuffer::GetColorAttachmentHandle(std::size_t index) const
+    RendererId OpenGLFramebuffer::GetColorAttachmentHandle(std::size_t index) const
     {
         return m_ColorAttachments[index];
     }
 
-    Ra::RendererId OpenGLFramebuffer::GetDrawTextureHandle(std::size_t index /*= 0*/) const
+    RendererId OpenGLFramebuffer::GetDrawTextureHandle(std::size_t index /*= 0*/) const
     {
         return m_Properties.Samples > 1 ? m_ResolvedAttachments[index] : m_ColorAttachments[index];
     }
@@ -140,6 +150,33 @@ namespace Ra
         glReadBuffer(GL_COLOR_ATTACHMENT0 + attachmentIndex);
         glReadPixels(x, y, 1, 1, GL_RED_INTEGER, GL_INT, &pixelData);
         return pixelData;
+    }
+
+    RendererId OpenGLFramebuffer::GetDepthTextureHandle()
+    {
+        return m_DepthAttachment;
+    }
+
+    void OpenGLFramebuffer::BindDepthTexture()
+    {
+        RA_ASSERT(m_Properties.Samples == 1, "Depth texture binding for multisampled buffers not supported!");
+        glActiveTexture(GL_TEXTURE0 + Renderer::GetLastTextureUnit() + 1);
+        glBindTexture(GL_TEXTURE_2D, m_DepthAttachment);
+        Renderer::SetLastTextureUnit(Renderer::GetLastTextureUnit() + 1);
+    }
+
+    void OpenGLFramebuffer::BindColorAttachment(std::size_t index /*= 0*/)
+    {
+        glActiveTexture(GL_TEXTURE0 + Renderer::GetLastTextureUnit() + 1);
+        Utils::BindTexture(GetColorAttachmentHandle(index), m_Properties.Samples > 1);
+        Renderer::SetLastTextureUnit(Renderer::GetLastTextureUnit() + 1);
+    }
+
+    void OpenGLFramebuffer::BindDrawTexture(std::size_t index /*= 0*/)
+    {
+        glActiveTexture(GL_TEXTURE0 + Renderer::GetLastTextureUnit() + 1);
+        Utils::BindTexture(GetDrawTextureHandle(index), m_Properties.Samples > 1);
+        Renderer::SetLastTextureUnit(Renderer::GetLastTextureUnit() + 1);
     }
 
     void OpenGLFramebuffer::Invalidate_()
@@ -177,8 +214,12 @@ namespace Ra
         case TextureFormat::Depth24Stencil8:
             Utils::AttachDepthTexture(m_DepthAttachment, GL_DEPTH24_STENCIL8, GL_DEPTH_STENCIL_ATTACHMENT, m_Properties.Width, m_Properties.Height, m_Properties.Samples);
             break;
+        case TextureFormat::DepthComponent:
+            Utils::AttachDepthTexture(m_DepthAttachment, GL_DEPTH_COMPONENT, GL_DEPTH_ATTACHMENT, m_Properties.Width, m_Properties.Height, m_Properties.Samples);
+            break;
         }
 
+        auto a = glCheckFramebufferStatus(GL_FRAMEBUFFER);
         RA_ASSERT(glCheckFramebufferStatus(GL_FRAMEBUFFER) == GL_FRAMEBUFFER_COMPLETE, "Framebuffer is incomplete!");
 
         // Resolve framebuffer
@@ -214,9 +255,11 @@ namespace Ra
         if (m_ColorAttachments.size() > 1)
         {
             RA_ASSERT(m_ColorAttachments.size() <= 4, "Framebuffers support up to 4 color attachments!");
-            GLenum buffers[] = {GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 , GL_COLOR_ATTACHMENT2 ,GL_COLOR_ATTACHMENT3 };
+            GLenum buffers[] = { GL_COLOR_ATTACHMENT0, GL_COLOR_ATTACHMENT1 , GL_COLOR_ATTACHMENT2 ,GL_COLOR_ATTACHMENT3 };
             glDrawBuffers((GLsizei)m_ColorAttachments.size(), buffers);
         }
+        else if (m_ColorAttachments.size() == 0)
+            glDrawBuffer(GL_NONE);
 
         glBindFramebuffer(GL_FRAMEBUFFER, 0);
     }

@@ -96,6 +96,26 @@ namespace Ra
         return GL_LESS;
     }
 
+    void OpenGLRendererAPI::SetCullFace(CullFace face)
+    {
+        GLenum f;
+
+        switch (face)
+        {
+        case Ra::RendererAPI::CullFace::Both:
+            f = GL_FRONT_AND_BACK;
+            break;
+        case Ra::RendererAPI::CullFace::Back:
+            f = GL_BACK;
+            break;
+        case Ra::RendererAPI::CullFace::Front:
+            f = GL_FRONT;
+            break;
+        }
+
+        glCullFace(f);
+    }
+
     const std::unordered_map<Ra::RendererAPI::DrawMode, int> OpenGLRendererAPI::s_ToAPIDrawModeMap = {
          {RendererAPI::DrawMode::Triangles,        GL_TRIANGLES},
          {RendererAPI::DrawMode::Lines,            GL_LINES},

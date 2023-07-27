@@ -50,10 +50,17 @@ namespace Ra
          * multisampled texture will be returned. To receive just the 2d texture to draw use GetDrawTextureHandle();
         */
         virtual RendererId GetColorAttachmentHandle(std::size_t index = 0) const = 0;
+        /// Binds color attachment with given index
+        virtual void BindColorAttachment(std::size_t index = 0) = 0;
         /**
-         * @brief Returns a resolved 2d texture with given index in case of multisampled framebuffers and color attachment for others
+         * @brief Returns a resolved 2d texture with given index in case of multisampled framebuffers and color attachment for other
         */
         virtual RendererId GetDrawTextureHandle(std::size_t index = 0) const = 0;
+
+        /// Binds resolved 2d texture with given index in case of multisampled framebuffer and color attachment for others
+        virtual void BindDrawTexture(std::size_t index = 0) = 0;
+        virtual RendererId GetDepthTextureHandle() = 0;
+        virtual void BindDepthTexture() = 0;
 
         virtual const FramebufferProperties& GetProperties() const = 0;
 

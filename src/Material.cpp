@@ -6,7 +6,7 @@
 namespace Ra
 {
 
-    void Material::LoadTo(const Ref<Shader>& shader) const
+    void Material::LoadTo(Ref<Shader>& shader) const
     {
         PROFILER_SCOPE("Material::LoadTo()");
         shader->Bind();
@@ -38,7 +38,7 @@ namespace Ra
         shader->SetFloat("u_Material.Refraction", Refraction);
         shader->SetFloat("u_Material.RefractiveIndex", RefractiveIndex);
         shader->SetFloat("u_Material.Opacity", Opacity);
-        shader->SetBool("u_Material.SkipLight", SkipLight);
+        shader->SetFloat("u_Material.CastShadows", CastShadows);
     }
 
 }
