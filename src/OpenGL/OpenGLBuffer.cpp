@@ -55,6 +55,7 @@ namespace Ra
         glGenBuffers(1, &m_Handle);
         Bind();
         glBufferData(GL_ELEMENT_ARRAY_BUFFER, count * sizeof(uint32_t), indices, GL_STATIC_DRAW);
+
     }
 
     void OpenGLIndexBuffer::Bind()

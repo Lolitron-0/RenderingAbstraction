@@ -13,7 +13,7 @@ namespace Ra
 
     OpenGLShader::OpenGLShader(const std::string& shaderPath)
     {
-        auto& [vertexSource, fragSource] = GetShaderSources_(LoadSourceFromFile_(shaderPath));
+        auto [vertexSource, fragSource] = GetShaderSources_(LoadSourceFromFile_(shaderPath));
         Compile_(vertexSource, fragSource);
     }
 

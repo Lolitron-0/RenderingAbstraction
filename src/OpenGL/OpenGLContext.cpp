@@ -11,10 +11,6 @@ namespace Ra
         Init();
     }
 
-    OpenGLContext::~OpenGLContext()
-    {
-    }
-
     void OpenGLContext::Init()
 {
         glfwMakeContextCurrent(m_WindowHandle);

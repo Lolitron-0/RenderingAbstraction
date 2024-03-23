@@ -1,7 +1,7 @@
 #include "rapch.h"
-#include "Renderer.hpp"
+#include "Renderer3D.hpp"
 //#include "RenderCommand.hpp"
-#include "RendererApi.hpp"
+#include "RendererAPI.hpp"
 #include "Buffer.hpp"
 #include "VertexArray.hpp"
 #include "Framebuffer.hpp"
@@ -13,22 +13,21 @@
 
 namespace Ra
 {
-    Ra::RendererStats Renderer::s_Stats{};
+    Ra::RendererStats Renderer3D::s_Stats{};
 
-    RendererAPI::API Renderer::s_RendererAPI = RendererAPI::API::None;
+    RendererAPI::API Renderer3D::s_RendererAPI = RendererAPI::API::None;
 
-    Scope<Ra::Renderer::SceneData> Renderer::s_SceneData = std::make_unique<Renderer::SceneData>();
+    Scope<Ra::Renderer3D::SceneData> Renderer3D::s_SceneData = std::make_unique<Renderer3D::SceneData>();
 
-    Ra::Renderer::Renderer3DData Renderer::s_RendererData{};
+    Ra::Renderer3D::Renderer3DData Renderer3D::s_RendererData{};
 
-    Ra::Renderer3DStorage Renderer::Storage{};
+    Ra::Renderer3DStorage Renderer3D::Storage{};
 
-    void Renderer::Init()
+    void Renderer3D::Init()
     {
         PROFILER_SCOPE("Renderer::Init()");
         std::uint8_t nullTexData[] = { 255,255,255,0 };
         Texture::NullTexture = Texture::Create(nullTexData, 1, 1, 4);
-
 
         //if (s_RendererAPI != RendererAPI::API::None)
         //    RenderCommand::Init();
@@ -44,21 +43,21 @@ namespace Ra
         shadowMapProps.Height = 8192;
         shadowMapProps.Samples = 1;
         shadowMapProps.Attachments = { TextureFormat::DepthComponent };
-        s_RendererData.ShadowMap = Framebuffer::Create(std::move(shadowMapProps));
+        s_RendererData.ShadowMap = Framebuffer::Create(shadowMapProps);
 
         FramebufferProperties postprocessingBufferProps;
         postprocessingBufferProps.Width = 1920; //default
         postprocessingBufferProps.Height = 1080;
         postprocessingBufferProps.Samples = 1;
         postprocessingBufferProps.Attachments = { TextureFormat::ColorLinear, Ra::TextureFormat::DepthStencil };
-        s_RendererData.PostprocessingBuffer = Framebuffer::Create(std::move(postprocessingBufferProps));
+        s_RendererData.PostprocessingBuffer = Framebuffer::Create(postprocessingBufferProps);
     }
 
-    void Renderer::Shutdown()
+    void Renderer3D::Shutdown()
     {
     }
 
-    void Renderer::DrawSkybox(const Skybox& skybox)
+    void Renderer3D::DrawSkybox(const Skybox& skybox)
     {
         RendererAPI::GetInstance().SetDepthFunc(RendererAPI::DepthFunc::Lequal);
 
@@ -71,23 +70,23 @@ namespace Ra
         RendererAPI::GetInstance().SetDepthFunc(RendererAPI::DepthFunc::Less);
     }
 
-    void Renderer::ResizeViewport(const glm::vec2& size)
+    void Renderer3D::ResizeViewport(const glm::vec2& size)
     {
-        s_RendererData.PostprocessingBuffer->Resize((std::uint32_t)size.x, (std::uint32_t)size.y);
+        s_RendererData.PostprocessingBuffer->Resize(static_cast<std::uint32_t>(size.x), static_cast<std::uint32_t>(size.y));
     }
 
-    glm::vec2 Renderer::GetViewportSize()
+    glm::vec2 Renderer3D::GetViewportSize()
     {
         return { s_RendererData.PostprocessingBuffer->GetProperties().Width, s_RendererData.PostprocessingBuffer->GetProperties().Height };
     }
 
-    Ra::RendererId Renderer::GetResultTextureHandle()
+    Ra::RendererId Renderer3D::GetResultTextureHandle()
     {
         return s_RendererData.PostprocessingBuffer->GetDrawTextureHandle();
         //return s_RendererData.ShadowMap->GetDepthTextureHandle();
     }
 
-    void Renderer::BeginScene(const glm::mat4& viewMatrix, const glm::mat4& projMatrix, const glm::vec3& cameraPosition, const Skybox& skybox)
+    void Renderer3D::BeginScene(const glm::mat4& viewMatrix, const glm::mat4& projMatrix, const glm::vec3& cameraPosition, const Skybox& skybox)
     {
         s_SceneData->ViewMatrix = viewMatrix;
         s_SceneData->ProjMatrix = projMatrix;
@@ -99,7 +98,7 @@ namespace Ra
         s_Stats = {};
     }
 
-    void Renderer::EndScene()
+    void Renderer3D::EndScene()
     {
 
         // Shadow pass
@@ -124,7 +123,7 @@ namespace Ra
         s_Stats.ScenesPerSecond = 1000000.0f / s_Stats.ScenesPerSecondSW.Elapsed();
     }
 
-    void Renderer::Submit(const Ref<VertexArray>& vertexArray, const Transform& transform, Ref<Shader>& shader, RendererAPI::DrawMode mode /*= RendererAPI::DrawMode::Triangles*/)
+    void Renderer3D::Submit(const Ref<VertexArray>& vertexArray, const Transform& transform, Ref<Shader>& shader, RendererAPI::DrawMode mode /*= RendererAPI::DrawMode::Triangles*/)
     {
 
         PROFILER_SCOPE("Renderer::Submit( VertexArray )");
@@ -148,10 +147,10 @@ namespace Ra
 
     }
 
-    void Renderer::Submit(const Ref<Mesh>& mesh, const Transform& transform, RendererAPI::DrawMode mode /*= RendererAPI::DrawMode::Triangles*/)
+    void Renderer3D::Submit(const Ref<Mesh>& mesh, const Transform& transform, RendererAPI::DrawMode mode /*= RendererAPI::DrawMode::Triangles*/)
     {
         PROFILER_SCOPE("Renderer::Submit( Mesh )  -  " + mesh->GetPath());
-        s_SceneData->RenderQueue.push_back([mesh, transform, mode](Ref<Shader>& shader)
+        s_SceneData->RenderQueue.push_back([mesh, transform, mode](Ref<Shader> shader)
             {
                 auto& subMeshes = mesh->GetSubMeshes();
                 for (auto& it : subMeshes)
@@ -164,7 +163,7 @@ namespace Ra
         );
     }
 
-    void Renderer::DrawVector(const glm::vec3& position, const glm::vec3& direction)
+    void Renderer3D::DrawVector(const glm::vec3& position, const glm::vec3& direction)
     {
         glm::mat4 trans;
         glm::mat4 translation{glm::translate(glm::mat4{1.f}, position)};
@@ -180,7 +179,7 @@ namespace Ra
     //    Submit(Storage.CubeVertexArray, transform, material, mode);
     //}
 
-    void Renderer::SubmitLight(const PointLight& light, const glm::vec3& position)
+    void Renderer3D::SubmitLight(const PointLight& light, const glm::vec3& position)
     {
         std::string uniformLightToken = "u_PointLights[" + std::to_string(s_SceneData->SubmittedPointLights++) + "].";
         Storage.BlinnPhongShader->Bind();
@@ -189,7 +188,7 @@ namespace Ra
         Storage.BlinnPhongShader->SetFloat(uniformLightToken + "Intensity", light.Intensity);
     }
 
-    void Renderer::SubmitLight(const DirLight& light)
+    void Renderer3D::SubmitLight(const DirLight& light)
     {
         RA_ASSERT(s_SceneData->SubmittedDirLights == 0, "Multiple dir lights not supported!")
             std::string uniformLightToken = "u_DirLight.";
@@ -213,17 +212,17 @@ namespace Ra
 
     }
 
-    void Renderer::SetLastTextureUnit(std::uint32_t unit)
+    void Renderer3D::SetLastTextureUnit(std::uint32_t unit)
     {
         s_SceneData->LastUsedTextureUnit = unit;
     }
 
-    std::uint8_t Renderer::GetLastTextureUnit()
+    std::uint8_t Renderer3D::GetLastTextureUnit()
     {
         return s_SceneData->LastUsedTextureUnit;
     }
 
-    Ra::RendererStats Renderer::GetStats()
+    Ra::RendererStats Renderer3D::GetStats()
     {
         return s_Stats;
     }

@@ -2,7 +2,7 @@
 #include "OpenGL/OpenGLCubemap.hpp"
 #include <glad/glad.h>
 #include <stb_image/stb_image.h>
-#include "Renderer.hpp"
+#include "Renderer3D.hpp"
 
 namespace Ra
 {
@@ -13,7 +13,7 @@ namespace Ra
 
     void OpenGLCubemap::Bind(std::uint32_t unit)
     {
-        Renderer::SetLastTextureUnit(unit);
+        Renderer3D::SetLastTextureUnit(unit);
         glActiveTexture(GL_TEXTURE0 + unit);
         glBindTexture(GL_TEXTURE_CUBE_MAP, m_Handle);
     }

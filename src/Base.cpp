@@ -8,12 +8,12 @@ namespace Ra
 
     std::string GetShadersDir()
     {
-        return (std::filesystem::path(__FILE__).parent_path().parent_path() / std::filesystem::path("src\\shaders\\")).string();
+        return (std::filesystem::path(__FILE__).parent_path().parent_path() / std::filesystem::path("src/shaders/")).string();
     }
 
     std::string GetMeshesDir()
     {
-        return (std::filesystem::path(__FILE__).parent_path().parent_path() / std::filesystem::path("meshes\\")).string();
+        return (std::filesystem::path(__FILE__).parent_path().parent_path() / std::filesystem::path("meshes/")).string();
     }
 
 }

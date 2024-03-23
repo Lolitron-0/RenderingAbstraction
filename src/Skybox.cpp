@@ -1,6 +1,6 @@
 #include "rapch.h"
 #include "Skybox.hpp"
-#include "CubeMap.hpp"
+#include "Cubemap.hpp"
 #include "Buffer.hpp"
 #include "VertexArray.hpp"
 #include "RendererAPI.hpp"

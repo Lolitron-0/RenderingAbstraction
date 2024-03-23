@@ -14,7 +14,7 @@ namespace Ra
         PROFILER_SCOPE("Mesh::LoadMesh()");
         m_Path = path;
         Assimp::Importer importer;
-        const aiScene* scene;
+        const aiScene* scene{};
         {
             PROFILER_SCOPE("Mesh: read file");
             scene = importer.ReadFile(m_Path.string(), aiProcess_Triangulate | aiProcess_FlipUVs  /* | aiProcess_GenSmoothNormals | aiProcess_JoinIdenticalVertices |

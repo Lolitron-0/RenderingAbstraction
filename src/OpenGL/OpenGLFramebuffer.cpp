@@ -1,7 +1,7 @@
 #include "rapch.h"
 #include "OpenGL/OpenGLFramebuffer.hpp"
 #include <glad/glad.h>
-#include "../../include/Renderer.hpp"
+#include "Renderer3D.hpp"
 
 namespace Ra
 {
@@ -160,23 +160,23 @@ namespace Ra
     void OpenGLFramebuffer::BindDepthTexture()
     {
         RA_ASSERT(m_Properties.Samples == 1, "Depth texture binding for multisampled buffers not supported!");
-        glActiveTexture(GL_TEXTURE0 + Renderer::GetLastTextureUnit() + 1);
+        glActiveTexture(GL_TEXTURE0 + Renderer3D::GetLastTextureUnit() + 1);
         glBindTexture(GL_TEXTURE_2D, m_DepthAttachment);
-        Renderer::SetLastTextureUnit(Renderer::GetLastTextureUnit() + 1);
+        Renderer3D::SetLastTextureUnit(Renderer3D::GetLastTextureUnit() + 1);
     }
 
     void OpenGLFramebuffer::BindColorAttachment(std::size_t index /*= 0*/)
     {
-        glActiveTexture(GL_TEXTURE0 + Renderer::GetLastTextureUnit() + 1);
+        glActiveTexture(GL_TEXTURE0 + Renderer3D::GetLastTextureUnit() + 1);
         Utils::BindTexture(GetColorAttachmentHandle(index), m_Properties.Samples > 1);
-        Renderer::SetLastTextureUnit(Renderer::GetLastTextureUnit() + 1);
+        Renderer3D::SetLastTextureUnit(Renderer3D::GetLastTextureUnit() + 1);
     }
 
     void OpenGLFramebuffer::BindDrawTexture(std::size_t index /*= 0*/)
     {
-        glActiveTexture(GL_TEXTURE0 + Renderer::GetLastTextureUnit() + 1);
+        glActiveTexture(GL_TEXTURE0 + Renderer3D::GetLastTextureUnit() + 1);
         Utils::BindTexture(GetDrawTextureHandle(index), m_Properties.Samples > 1);
-        Renderer::SetLastTextureUnit(Renderer::GetLastTextureUnit() + 1);
+        Renderer3D::SetLastTextureUnit(Renderer3D::GetLastTextureUnit() + 1);
     }
 
     void OpenGLFramebuffer::Invalidate_()
@@ -191,7 +191,7 @@ namespace Ra
         bool multisampled = m_Properties.Samples > 1;
         for (std::size_t i = 0; i < m_ColorAttachmentSpecifications.size(); i++)
         {
-            RendererId textureId;
+            RendererId textureId{};
             Utils::CreateTexture(&textureId, multisampled);
             switch (m_ColorAttachmentSpecifications[i].Format)
             {

@@ -1,6 +1,6 @@
 #include "rapch.h"
 #include "Texture.hpp"
-#include "Renderer.hpp"
+#include "Renderer3D.hpp"
 #include "OpenGL/OpenGLTexture.hpp"
 #include "ResourceManager.hpp"
 #include <Profiler.hpp>
@@ -12,7 +12,7 @@ namespace Ra
     {
         PROFILER_SCOPE("Texture::Create(file)")
         Ref<Texture> ret;
-        switch (Renderer::GetAPI())
+        switch (Renderer3D::GetAPI())
         {
         case RendererAPI::API::OpenGL: ret = MakeRef<OpenGLTexture>(); break;
         default: ret = nullptr; break;
@@ -31,7 +31,7 @@ namespace Ra
     Ref<Texture> Texture::Create(std::uint8_t* rawData, std::uint32_t width, std::uint32_t height, std::uint32_t channels, TextureFormat format /*= TextureFormat::Color*/, TextureType type /*= TextureType::Diffuse*/)
     {
         Ref<Texture> ret;
-        switch (Renderer::GetAPI())
+        switch (Renderer3D::GetAPI())
         {
         case RendererAPI::API::OpenGL: ret = MakeRef<OpenGLTexture>(); break;
         default: ret = nullptr; break;

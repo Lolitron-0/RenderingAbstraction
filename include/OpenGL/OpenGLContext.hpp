@@ -9,7 +9,6 @@ namespace Ra
     {
     public:
         OpenGLContext(GLFWwindow* windowHandle);
-        ~OpenGLContext();
 
         void Init() override;
         void SwapBuffers() override;

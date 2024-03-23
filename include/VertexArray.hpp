@@ -10,6 +10,8 @@ namespace Ra
     class VertexArray
     {
     public:
+		virtual ~VertexArray() = default;
+
         virtual void Bind() = 0;
         virtual void Unbind() = 0;
 
