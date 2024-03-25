@@ -1,6 +1,6 @@
 #include "rapch.h"
 #include "Cubemap.hpp"
-#include "Renderer3D.hpp"
+#include "RenderCommand.hpp"
 #include "ResourceManager.hpp"
 #include "OpenGL/OpenGLCubemap.hpp"
 #include <Profiler.hpp>
@@ -17,7 +17,7 @@ namespace Ra
     {
         PROFILER_SCOPE("Cubemap::Create(sweep)");
         Ref<Cubemap> ret;
-        switch (Renderer3D::GetAPI())
+        switch (RenderCommand::GetAPI())
         {
         case RendererAPI::API::OpenGL: ret = MakeRef<OpenGLCubemap>(); break;
         default: ret = nullptr; break;
@@ -37,7 +37,7 @@ namespace Ra
     {
         PROFILER_SCOPE("Cubemap::Create(files)");
         Ref<Cubemap> ret;
-        switch (Renderer3D::GetAPI())
+        switch (RenderCommand::GetAPI())
         {
         case RendererAPI::API::OpenGL: ret = MakeRef<OpenGLCubemap>(); break;
         default: ret = nullptr; break;

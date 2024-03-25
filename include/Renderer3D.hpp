@@ -36,7 +36,7 @@ struct RendererStats
 };
 
 /// High level rendering commands (Scene level)
-class Renderer3D
+class Renderer3D 
 {
 public:
     struct Transform
@@ -57,19 +57,6 @@ public:
 
     static void Init();
     static void Shutdown();
-
-    static RendererAPI::API GetAPI()
-    {
-        return s_RendererAPI;
-    }
-
-    /// Sets current rendering API. Can only be set once
-    static void SetAPI(RendererAPI::API api)
-    {
-        RA_ASSERT(s_RendererAPI == RendererAPI::API::None,
-                  "Rendering API can only be set once!");
-        s_RendererAPI = api;
-    }
 
     static void ResizeViewport(const glm::vec2& size);
     static auto GetViewportSize() -> glm::vec2;
@@ -159,7 +146,4 @@ private:
     static Scope<SceneData> s_SceneData;
     static Renderer3DData s_RendererData;
 };
-
-// backwards compatibility
-using Renderer = Renderer3D;
 } // namespace Ra

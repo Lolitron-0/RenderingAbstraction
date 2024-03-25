@@ -1,6 +1,6 @@
 #include "Shader.hpp"
 #include "OpenGL/OpenGLShader.hpp"
-#include "Renderer3D.hpp"
+#include "RenderCommand.hpp"
 #include "rapch.h"
 #include <fstream>
 
@@ -9,7 +9,7 @@ namespace Ra
 Scope<Shader> Shader::Create(const std::string& vertPath,
                              const std::string& fragPath)
 {
-    switch (Renderer3D::GetAPI())
+    switch (RenderCommand::GetAPI())
     {
     case RendererAPI::API::OpenGL:
         return MakeScope<OpenGLShader>(vertPath, fragPath);
@@ -23,7 +23,7 @@ Scope<Shader> Shader::Create(const std::string& vertPath,
 
 Scope<Shader> Shader::Create(const std::string& shaderPath)
 {
-    switch (Renderer3D::GetAPI())
+    switch (RenderCommand::GetAPI())
     {
     case RendererAPI::API::OpenGL:
         return MakeScope<OpenGLShader>(shaderPath);
@@ -35,7 +35,7 @@ Scope<Shader> Shader::Create(const std::string& shaderPath)
     }
 }
 
-std::string Shader::LoadSourceFromFile_(const std::string& path)
+auto Shader::LoadSourceFromFile_(const std::string& path) -> std::string
 {
     std::ifstream stream(path);
 

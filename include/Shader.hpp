@@ -52,6 +52,6 @@ namespace Ra
         static Scope<Shader> Create(const std::string& shaderPath);
 
     protected:
-        std::string LoadSourceFromFile_(const std::string& path);
+        static auto LoadSourceFromFile_(const std::string& path) -> std::string;
     };
 }

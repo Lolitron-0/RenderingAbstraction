@@ -1,18 +1,20 @@
-#include "rapch.h"
 #include "Framebuffer.hpp"
-#include "Renderer3D.hpp"
 #include "OpenGL/OpenGLFramebuffer.hpp"
+#include "RenderCommand.hpp"
+#include "rapch.h"
 
 namespace Ra
 {
 
-    Scope<Framebuffer> Framebuffer::Create(const FramebufferProperties& props)
+auto Framebuffer::Create(const FramebufferProperties& props) -> Scope<Framebuffer>
+{
+    switch (RenderCommand::GetAPI())
     {
-        switch (Renderer3D::GetAPI())
-        {
-        case RendererAPI::API::OpenGL: return MakeScope<OpenGLFramebuffer>(props);
-        default: return nullptr;
-        }
+    case RendererAPI::API::OpenGL:
+        return MakeScope<OpenGLFramebuffer>(props);
+    default:
+        return nullptr;
     }
-
 }
+
+} // namespace Ra

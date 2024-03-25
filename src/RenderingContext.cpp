@@ -1,13 +1,15 @@
 #include "RenderingContext.hpp"
 #include "OpenGL/OpenGLContext.hpp"
-#include "Renderer3D.hpp"
+#include "RenderCommand.hpp"
 #include "rapch.h"
 
 namespace Ra
 {
+std::function<void(void)> RenderingContext::s_ContextLoadCallback = []() {};
+
 Scope<RenderingContext> RenderingContext::Create(std::any windowHandle)
 {
-    switch (Renderer3D::GetAPI())
+    switch (RenderCommand::GetAPI())
     {
     case RendererAPI::API::OpenGL:
         return MakeScope<OpenGLContext>(
@@ -17,5 +19,10 @@ Scope<RenderingContext> RenderingContext::Create(std::any windowHandle)
         return nullptr;
     }
     }
+}
+void RenderingContext::SetOnContextLoadCallback(
+    std::function<void(void)> callback)
+{
+    s_ContextLoadCallback = std::move(callback);
 }
 } // namespace Ra

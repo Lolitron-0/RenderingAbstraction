@@ -3,7 +3,7 @@
 #include "Cubemap.hpp"
 #include "Buffer.hpp"
 #include "VertexArray.hpp"
-#include "RendererAPI.hpp"
+#include "RenderCommand.hpp"
 
 namespace Ra
 {
@@ -37,7 +37,7 @@ namespace Ra
 
     void Skybox::DrawBoundsCube() const
     {
-        RendererAPI::GetInstance().DrawIndexed(s_SkyboxVAO, RendererAPI::DrawMode::Triangles);
+    	RenderCommand::DrawIndexed(s_SkyboxVAO, RendererAPI::DrawMode::Triangles);
     }
 
     void Skybox::SetupBox_()

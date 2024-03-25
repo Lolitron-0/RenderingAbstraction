@@ -1,48 +1,62 @@
-#include "rapch.h"
 #include "Texture.hpp"
-#include "Renderer3D.hpp"
 #include "OpenGL/OpenGLTexture.hpp"
+#include "RenderCommand.hpp"
 #include "ResourceManager.hpp"
+#include "rapch.h"
 #include <Profiler.hpp>
 
 namespace Ra
 {
 
-    Ref<Texture> Texture::Create(const std::string& path, TextureFormat format, TextureType type)
+Ref<Texture> Texture::Create(const std::string& path, TextureFormat format,
+                             TextureType type)
+{
+    PROFILER_SCOPE("Texture::Create(file)")
+    Ref<Texture> ret;
+    switch (RenderCommand::GetAPI())
     {
-        PROFILER_SCOPE("Texture::Create(file)")
-        Ref<Texture> ret;
-        switch (Renderer3D::GetAPI())
-        {
-        case RendererAPI::API::OpenGL: ret = MakeRef<OpenGLTexture>(); break;
-        default: ret = nullptr; break;
-        }
-        
-        if (ResourceManager::TryFindAlreadyLoaded<Texture>(ret, path))
-            return ret;
+    case RendererAPI::API::OpenGL:
+        ret = MakeRef<OpenGLTexture>();
+        break;
+    default:
+        ret = nullptr;
+        break;
+    }
 
-        {
-            PROFILER_SCOPE("Texture: creating from file " + path)
-            ret->LoadFromFile_(path, format, type);
-        }
+    if (ResourceManager::TryFindAlreadyLoaded<Texture>(ret, path))
+    {
         return ret;
     }
 
-    Ref<Texture> Texture::Create(std::uint8_t* rawData, std::uint32_t width, std::uint32_t height, std::uint32_t channels, TextureFormat format /*= TextureFormat::Color*/, TextureType type /*= TextureType::Diffuse*/)
     {
-        Ref<Texture> ret;
-        switch (Renderer3D::GetAPI())
-        {
-        case RendererAPI::API::OpenGL: ret = MakeRef<OpenGLTexture>(); break;
-        default: ret = nullptr; break;
-        }
-        {
-            PROFILER_SCOPE("Texture: creating from data")
-            ret->LoadFromData_(rawData, width, height, channels, format, type);
-        }
-        return ret;
+        PROFILER_SCOPE("Texture: creating from file " + path)
+        ret->LoadFromFile_(path, format, type);
     }
-
-    Ref<Texture> Texture::NullTexture = nullptr;
-
+    return ret;
 }
+
+Ref<Texture> Texture::Create(std::uint8_t* rawData, std::uint32_t width,
+                             std::uint32_t height, std::uint32_t channels,
+                             TextureFormat format /*= TextureFormat::Color*/,
+                             TextureType type /*= TextureType::Diffuse*/)
+{
+    Ref<Texture> ret;
+    switch (RenderCommand::GetAPI())
+    {
+    case RendererAPI::API::OpenGL:
+        ret = MakeRef<OpenGLTexture>();
+        break;
+    default:
+        ret = nullptr;
+        break;
+    }
+    {
+        PROFILER_SCOPE("Texture: creating from data")
+        ret->LoadFromData_(rawData, width, height, channels, format, type);
+    }
+    return ret;
+}
+
+Ref<Texture> Texture::NullTexture = nullptr;
+
+} // namespace Ra

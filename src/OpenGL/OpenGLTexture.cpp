@@ -35,9 +35,8 @@ static GLenum g_TextureWrapTable[] = { GL_CLAMP_TO_EDGE, GL_CLAMP_TO_BORDER,
                                        GL_MIRRORED_REPEAT, GL_REPEAT };
 
 OpenGLTexture::OpenGLTexture()
-    : Texture()
+    : m_Target{ GL_TEXTURE_2D }
 {
-    m_Target = GL_TEXTURE_2D;
     glCreateTextures(m_Target, 1, &m_Handle);
 }
 OpenGLTexture::~OpenGLTexture()
@@ -69,6 +68,7 @@ void OpenGLTexture::LoadFromData_(
     TextureType type)
 {
     m_Type = type;
+    m_Format = format;
     Bind();
     this->m_Width = width;
     this->m_Height = height;
@@ -92,7 +92,8 @@ void OpenGLTexture::LoadFromData_(
 
     RA_ASSERT(dataChannels != GL_NONE, "Unsupported number of channels!");
 
-    glTexImage2D(m_Target, 0, g_TextureFormatTable[(int)this->m_Format],
+    glTexImage2D(m_Target, 0,
+                 g_TextureFormatTable[static_cast<int>(this->m_Format)],
                  (GLsizei)width, (GLsizei)height, 0, dataChannels,
                  GL_UNSIGNED_BYTE, rawData);
     glTexParameteri(m_Target, GL_TEXTURE_MIN_FILTER,

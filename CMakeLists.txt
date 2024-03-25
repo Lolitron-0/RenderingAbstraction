@@ -46,6 +46,8 @@ target_compile_definitions(RenderingAbstraction PUBLIC "GLFW_INCLUDE_NONE")
 
 #target_precompile_headers(RenderingAbstraction PUBLIC "${PROJECT_SOURCE_DIR}/include/rapch.h")
 
+# DEPENDENCIES
+
 add_subdirectory(thirdparty/assimp)
 target_link_libraries(RenderingAbstraction PUBLIC assimp)
 
@@ -63,6 +65,18 @@ target_link_libraries(RenderingAbstraction PUBLIC glfw)
 
 find_package(OpenGL REQUIRED)
 target_link_libraries(RenderingAbstraction PUBLIC OpenGL::GL)
+
+
+include(FetchContent)
+FetchContent_Declare(GSL
+    GIT_REPOSITORY "https://github.com/microsoft/GSL"
+    GIT_TAG "v4.0.0"
+    GIT_SHALLOW ON
+)
+FetchContent_MakeAvailable(GSL)
+
+target_link_libraries(RenderingAbstraction PUBLIC Microsoft.GSL::GSL)
+
 
 if (CMAKE_VERSION VERSION_GREATER 3.12)
   set_property(TARGET RenderingAbstraction PROPERTY CXX_STANDARD 20)
