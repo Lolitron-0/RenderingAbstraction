@@ -39,11 +39,11 @@ void OpenGLRendererAPI::Init()
     // glBlendFunc(GL_SRC_ALPHA, GL_ONE_MINUS_SRC_ALPHA);
     //
     // glEnable(GL_DEPTH_TEST);
-    glEnable(GL_STENCIL_TEST);
-    glEnable(GL_LINE_SMOOTH);
-    glEnable(GL_MULTISAMPLE);
-    glEnable(GL_BLEND);
-    //glEnable(GL_CULL_FACE);
+    // glEnable(GL_STENCIL_TEST);
+    // glEnable(GL_LINE_SMOOTH);
+    // glEnable(GL_MULTISAMPLE);
+    // glEnable(GL_BLEND);
+    // //glEnable(GL_CULL_FACE);
     glPointSize(10);
 }
 

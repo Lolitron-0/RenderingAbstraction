@@ -13,7 +13,7 @@
 
 namespace Ra
 {
-Ra::RendererStats Renderer3D::s_Stats{};
+RendererStats Renderer3D::s_Stats{};
 
 RendererAPI::API Renderer3D::s_RendererAPI = RendererAPI::API::None;
 
@@ -107,7 +107,7 @@ void Renderer3D::BeginScene(const glm::mat4& viewMatrix,
     s_SceneData->SubmittedDirLights = 0;
     s_SceneData->SkyboxObject = skybox;
     s_SceneData->RenderQueue.clear(); // no shrinking
-    s_Stats = {};
+    s_Stats.OnSceneBegin();
 }
 
 void Renderer3D::EndScene()
@@ -137,7 +137,7 @@ void Renderer3D::EndScene()
 
     s_RendererData.PostprocessingBuffer->StopWriting();
 
-    s_Stats.ScenesPerSecond = 1000000.0f / s_Stats.ScenesPerSecondSW.Elapsed();
+    s_Stats.OnSceneEnd();
 }
 
 void Renderer3D::Submit(

@@ -6,6 +6,7 @@
 #include "ShaderUserData.hpp"
 #include "Skybox.hpp"
 #include "Stopwatch.hpp"
+#include "RendererSharedStructs.hpp"
 #include <glm/glm.hpp>
 
 namespace Ra
@@ -25,14 +26,6 @@ struct Renderer3DStorage
     Ref<Shader> DepthShader;
 
     Material DebugMaterial;
-};
-
-struct RendererStats
-{
-    int DrawCalls{ 0 };
-    std::size_t Indices{ 0 };
-    Stopwatch ScenesPerSecondSW{};
-    float ScenesPerSecond{ -1.F };
 };
 
 /// High level rendering commands (Scene level)

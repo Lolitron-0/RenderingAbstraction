@@ -1,6 +1,7 @@
 #pragma once
 #include "Base.hpp"
 #include "RendererAPI.hpp"
+#include "RendererSharedStructs.hpp"
 #include <glm/glm.hpp>
 #include <gsl/gsl>
 
@@ -41,10 +42,11 @@ struct Renderer2DStorage
     static constexpr uint32_t MaxIndices{ MaxQuads * 6 };
     static constexpr int32_t QuadVertexCount{ 4 };
     static constexpr std::array<glm::vec4, 4> QuadVertexPositions{
-        { { -0.5F, -0.5F, 0.0F, 1.0F },
-          { 0.5F, -0.5F, 0.0F, 1.0F },
-          { 0.5F, 0.5F, 0.0F, 1.0F },
-          { -0.5F, 0.5F, 0.0F, 1.0F } }
+        // pivot is at top left corner
+        { { 0.0F, 0.0F, 0.0F, 1.0F },
+          { 1.0F, 0.0F, 0.0F, 1.0F },
+          { 1.0F, 1.0F, 0.0F, 1.0F },
+          { 0.0F, 1.0F, 0.0F, 1.0F } }
     };
     static constexpr std::array<glm::vec2, 4> QuadTexCoords{
         { { 0.0F, 0.0F }, { 1.0F, 0.0F }, { 1.0F, 1.0F }, { 0.0F, 1.0F } }
@@ -71,7 +73,7 @@ public:
     // static auto GetViewportSize() -> glm::vec2;
     // static auto GetResultTextureHandle() -> RendererId;
 
-    static void BeginScene();
+    static void BeginScene(const glm::mat4& viewProjMatrix);
 
     /// Marks scene as finished
     static void EndScene();
@@ -80,10 +82,23 @@ public:
     static void NextBatch();
     static void StartBatch();
 
-    static void DrawQuad(const glm::mat4& transform, Ref<Texture> texture);
+    static void DrawQuad(const glm::vec2& position, const glm::vec2& size,
+                         const glm::vec4& color);
     static void DrawQuad(const glm::mat4& transform, const glm::vec4& color);
+    static void DrawQuad(const glm::mat4& transform, Ref<Texture> texture);
+
+    static auto GetStats() -> RendererStats;
 
 private:
+    struct SceneData
+    {
+        glm::mat4 ViewProjection;
+    };
+
+    static SceneData s_SceneData;
+
+    static RendererStats s_Stats;
+
     static Renderer2DStorage s_Storage;
 };
 } // namespace Ra
