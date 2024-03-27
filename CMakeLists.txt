@@ -47,6 +47,7 @@ target_compile_definitions(RenderingAbstraction PUBLIC "GLFW_INCLUDE_NONE")
 #target_precompile_headers(RenderingAbstraction PUBLIC "${PROJECT_SOURCE_DIR}/include/rapch.h")
 
 # DEPENDENCIES
+include(FetchContent)
 
 add_subdirectory(thirdparty/assimp)
 target_link_libraries(RenderingAbstraction PUBLIC assimp)
@@ -54,20 +55,17 @@ target_link_libraries(RenderingAbstraction PUBLIC assimp)
 add_subdirectory(thirdparty/glm)
 target_link_libraries(RenderingAbstraction PUBLIC glm)
 
-set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
-set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
-set(GLFW_USE_WAYLAND ON)
+# set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
+# set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
+# set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
 
 find_package(glfw3 REQUIRED)
-# add_subdirectory(thirdparty/glfw)
 target_link_libraries(RenderingAbstraction PUBLIC glfw)
 
 find_package(OpenGL REQUIRED)
 target_link_libraries(RenderingAbstraction PUBLIC OpenGL::GL)
 
 
-include(FetchContent)
 FetchContent_Declare(GSL
     GIT_REPOSITORY "https://github.com/microsoft/GSL"
     GIT_TAG "v4.0.0"
