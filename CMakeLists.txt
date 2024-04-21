@@ -58,6 +58,7 @@ target_link_libraries(RenderingAbstraction PUBLIC glm)
 # set(GLFW_BUILD_DOCS OFF CACHE BOOL "" FORCE)
 # set(GLFW_BUILD_TESTS OFF CACHE BOOL "" FORCE)
 # set(GLFW_BUILD_EXAMPLES OFF CACHE BOOL "" FORCE)
+# set(GLFW_BUILD_WAYLAND ON)
 
 find_package(glfw3 REQUIRED)
 target_link_libraries(RenderingAbstraction PUBLIC glfw)
